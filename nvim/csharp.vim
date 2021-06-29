@@ -1,7 +1,10 @@
-" Configure LSP for Rust-Analyzer
-" https://github.com/neovim/nvim-lspconfig
+" Configure LSP for OmniSharp-Roslyn
+" https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#omnisharp
 
 lua <<EOF
+
+local pid = vim.fn.getpid()
+local omnisharp_bin = "C:/Binaries/omnisharp-win-x64/OmniSharp.exe"
 
 local on_attach = function(client)
     require'completion'.on_attach(client)
@@ -34,23 +37,9 @@ local on_attach = function(client)
     buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
--- Enable rust_analyzer
-require'lspconfig'.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
-                enable = true
-            },
-        }
-    }
+require'lspconfig'.omnisharp.setup({
+    on_attach = on_attach,
+    cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) }
 })
 
 EOF

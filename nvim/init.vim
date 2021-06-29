@@ -56,5 +56,11 @@ execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'autocompletion.vim'
 " Key mappings
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'keys.vim'
 
-" Rust Analyzer
+" Common LSP settigns
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'lsp.vim'
+
+" Rust specific
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'rust.vim'
+
+" C# specific
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'csharp.vim'
