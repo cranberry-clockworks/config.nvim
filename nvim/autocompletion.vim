@@ -11,3 +11,6 @@ autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
 " Show diagnostic popup on cursor hold
 set updatetime=300
 autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+
+let g:completion_enable_auto_hover = 1
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']

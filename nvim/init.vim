@@ -11,6 +11,17 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 
+" Treesitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+" Telescope
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+" Git
+Plug 'tpope/vim-fugitive'
+
 call plug#end()
 
 " Clipboard
@@ -47,6 +58,17 @@ set termguicolors
 " Show extra column for linter messages
 set signcolumn=yes
 
+" Status line
+set statusline=
+set statusline+=[#%b]
+"%f\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P
+set statusline+=\ %f
+set statusline+=\ %h%w%m%r
+set statusline+=\ %y
+set statusline+=%{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\"\ bom\":\"\").\"]\ \"}
+set statusline+=%=
+set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
+
 " Platform specific settings for Windows
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'windows.vim'
 
@@ -64,3 +86,9 @@ execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'rust.vim'
 
 " C# specific
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'csharp.vim'
+
+" Treesitter
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'treesitter.vim'
+
+" Telescope
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'telescope.vim'
