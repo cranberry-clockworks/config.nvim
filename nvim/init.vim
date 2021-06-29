@@ -51,6 +51,7 @@ set ruler showcmd showmode
 " Highlight search items
 set incsearch
 
+set fileformat=unix
 set encoding=utf-8
 
 set termguicolors
@@ -61,11 +62,11 @@ set signcolumn=yes
 " Status line
 set statusline=
 set statusline+=[#%b]
-"%f\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P
-set statusline+=\ %f
+set statusline+=\ %<%f
 set statusline+=\ %h%w%m%r
 set statusline+=\ %y
-set statusline+=%{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\"\ bom\":\"\").\"]\ \"}
+set statusline+=%{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\"\ bom\":\"\").\"]\\"}
+set statusline+=[%{&ff}]
 set statusline+=%=
 set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
 
