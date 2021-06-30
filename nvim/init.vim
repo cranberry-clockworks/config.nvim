@@ -22,6 +22,9 @@ Plug 'nvim-telescope/telescope.nvim'
 " Git
 Plug 'tpope/vim-fugitive'
 
+" Surroundings
+Plug 'tpope/vim-surround'
+
 call plug#end()
 
 " Clipboard
@@ -69,6 +72,10 @@ set statusline+=%{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)
 set statusline+=[%{&ff}]
 set statusline+=%=
 set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
+
+" Show invisibles
+:set list
+:set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,precedes:«,extends:»
 
 " Platform specific settings for Windows
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'windows.vim'

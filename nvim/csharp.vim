@@ -4,7 +4,7 @@
 lua <<EOF
 
 local pid = vim.fn.getpid()
-local omnisharp_bin = "C:/Binaries/omnisharp-win-x64/OmniSharp.exe"
+local omnisharp_bin = "C:/Program Files/nvim/lsp/omnisharp-win-x64/OmniSharp.exe"
 
 local on_attach = function(client)
     require'completion'.on_attach(client)
