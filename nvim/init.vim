@@ -1,4 +1,4 @@
-language en_UK
+language en_GB
 
 " Vim-Plug
 call plug#begin()
@@ -77,6 +77,9 @@ set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
 " Show invisible
 :set list
 :set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,precedes:«,extends:»
+
+" Spellcheking
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'spellcheck.vim'
 
 " Platform specific settings for Windows
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'windows.vim'
