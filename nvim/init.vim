@@ -3,10 +3,10 @@ language en_UK
 " Vim-Plug
 call plug#begin()
 
-" Colorscheme
+" Color scheme
 Plug 'morhetz/gruvbox'
 
-" Autocomplete via LSP
+" Auto complete via LSP
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
@@ -60,7 +60,7 @@ set ffs=unix,dos
 
 set termguicolors
 
-" Show extra column for linter messages
+" Show extra column for lintier messages
 set signcolumn=yes
 
 " Status line
@@ -74,7 +74,7 @@ set statusline+=[%{&ff}]
 set statusline+=%=
 set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
 
-" Show invisibles
+" Show invisible
 :set list
 :set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,precedes:«,extends:»
 
@@ -87,7 +87,7 @@ execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'autocompletion.vim'
 " Key mappings
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'keys.vim'
 
-" Common LSP settigns
+" Common LSP settings
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'lsp.vim'
 
 " Rust specific
