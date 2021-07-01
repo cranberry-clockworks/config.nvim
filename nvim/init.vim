@@ -82,6 +82,9 @@ set statusline+=\ %l/%L\ :\ %v\ [%3p%%]
 " Spellcheking
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'spellcheck.vim'
 
+" ReSharper tools
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'resharper.vim'
+
 " Platform specific settings for Windows
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'windows.vim'
 
