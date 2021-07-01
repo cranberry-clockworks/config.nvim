@@ -9,7 +9,8 @@ Plug 'morhetz/gruvbox'
 " Auto complete via LSP
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
-Plug 'nvim-lua/completion-nvim'
+Plug 'hrsh7th/nvim-compe'
+Plug 'ray-x/lsp_signature.nvim'
 
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -90,17 +91,11 @@ execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'autocompletion.vim'
 " Key mappings
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'keys.vim'
 
-" Common LSP settings
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'lsp.vim'
-
-" Rust specific
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'rust.vim'
-
-" C# specific
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'csharp.vim'
-
 " Treesitter
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'treesitter.vim'
+
+" Common LSP settings
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'lsp.vim'
 
 " Telescope
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'telescope.vim'
