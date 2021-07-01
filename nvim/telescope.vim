@@ -2,7 +2,8 @@
 nnoremap <M-f> <cmd>Telescope find_files<cr>
 nnoremap <M-g> <cmd>Telescope live_grep<cr>
 nnoremap <M-b> <cmd>Telescope buffers<cr>
-nnoremap <M-h> <cmd>Telescope help_tags<cr>
+nnoremap <M-n> <cmd>Telescope git_branches<cr> 
+nnoremap <M-s> <cmd>Telescope git_status<cr>
 
 lua <<EOF
 
@@ -55,5 +56,46 @@ require('telescope').setup{
     buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
   }
 }
+
+
+dotnet_picker = function(opts)
+    local pickers = require('telescope.pickers')
+    local finders = require('telescope.finders')
+    local sorters = require('telescope.sorters')
+    local conf = require('telescope.config').values
+    local actions = require('telescope.actions')
+    local action_state = require('telescope.actions.state')
+
+    dotnet_build = function(prompt_bufnr)
+        local current_picker = action_state.get_selected_entry(prompt_bufnr)
+        vim.cmd(string.format("!dotnet build \"%s\"", current_picker.value));
+        actions.close(prompt_bufnr)
+    end
+
+    local cmd = { 'rg','-g', '*{csproj,sln}', '--files', '.' }
+
+    pickers.new(opts, {
+        prompt_title = "dotnet",
+        finder = finders.new_oneshot_job(
+            cmd,
+            opts
+        ),
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = function(_, map)
+            -- Map "<cr>" in insert mode to the function, actions.set_command_line
+            map('i', '<C-b>', dotnet_build)
+            map('n', '<C-b>', dotnet_build)
+
+            -- If the return value of `attach_mappings` is true, then the other
+            -- default mappings are still applies.
+            --
+            -- Return false if you don't want any other mappings applied.
+            --
+            -- A return value _must_ be returned. It is an error to not return anything.
+            return true
+        end
+    }):find()
+end
+
 
 EOF
