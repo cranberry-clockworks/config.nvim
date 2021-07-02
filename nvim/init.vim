@@ -43,6 +43,9 @@ syntax on
 " Show line numbers
 set number
 
+" Show cursor line
+set cursorline
+
 " Show edited files in title
 set title
 
@@ -88,14 +91,17 @@ execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'windows.vim'
 " Autocmpletion
 execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'autocompletion.vim'
 
-" Key mappings
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'keys.vim'
-
 " Treesitter
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'treesitter.vim'
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'treesitter.lua'
 
 " Common LSP settings
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'lsp.vim'
+execute 'luafile ' . fnamemodify(stdpath('config'), ':p') . 'lsp.lua'
 
 " Telescope
-execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'telescope.vim'
+execute 'luafile ' . fnamemodify(stdpath('config'), ':p') . 'telescope.lua'
+
+" dotnet tools
+execute 'luafile ' . fnamemodify(stdpath('config'), ':p') . 'dotnet.lua'
+
+" Key mappings
+execute 'source ' . fnamemodify(stdpath('config'), ':p') . 'keys.vim'

@@ -1,5 +1,3 @@
-lua <<EOF
-
 require 'nvim-treesitter.install'.compilers = { "clang" }
 
 require'nvim-treesitter.configs'.setup {
@@ -11,5 +9,3 @@ require'nvim-treesitter.configs'.setup {
         enable = true
     }
 }
-
-EOF

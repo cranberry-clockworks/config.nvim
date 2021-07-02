@@ -1,5 +1,3 @@
-lua <<EOF
-
 local on_attach = function(client)
     require'lsp_signature'.on_attach()
 
@@ -83,5 +81,3 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     update_in_insert = true,
   }
 )
-
-EOF
