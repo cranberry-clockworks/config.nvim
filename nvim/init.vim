@@ -11,6 +11,7 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'hrsh7th/nvim-compe'
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'skywind3000/asyncrun.vim'
 
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -41,7 +42,7 @@ colorscheme gruvbox
 syntax on
 
 " Show line numbers
-set number
+set number relativenumber
 
 " Show cursor line
 set cursorline
@@ -69,7 +70,7 @@ set signcolumn=yes
 
 " Status line
 set statusline=
-set statusline+=[#%b]
+set statusline+=[#%{g:actual_curbuf}]
 set statusline+=\ %<%f
 set statusline+=\ %h%w%m%r
 set statusline+=\ %y

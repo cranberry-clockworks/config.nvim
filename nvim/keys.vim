@@ -1,4 +1,8 @@
+nnoremap <F7> :call ToggleSpellCheck()<CR>
+inoremap <F7> <C-o>:call ToggleSpellCheck()<CR>
+
 nnoremap <F9> :nohlsearch<CR>
+inoremap <F9> <C-o>:nohlsearch<CR>
 
 " Telescope
 nnoremap <M-f> <cmd>Telescope find_files<CR>

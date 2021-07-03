@@ -1,5 +1,5 @@
 " Font settings
-GuiFont JetBrains Mono:h8
+GuiFont JetBrains Mono:h9
 GuiRenderLigatures 1
 
 " Window settings

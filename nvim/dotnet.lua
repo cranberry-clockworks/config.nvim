@@ -1,3 +1,5 @@
+-- skywind3000/asyncrun.vim is used
+
 dotnet_picker = function(opts)
     local pickers = require('telescope.pickers')
     local finders = require('telescope.finders')
@@ -6,14 +8,16 @@ dotnet_picker = function(opts)
     local actions = require('telescope.actions')
     local action_state = require('telescope.actions.state')
 
+    local term = "AsyncRun -mode=term -pos=bottom"
+
     dotnet_build = function(prompt_bufnr)
         local current_picker = action_state.get_selected_entry(prompt_bufnr)
-        vim.cmd(string.format("!dotnet build \"%s\"", current_picker.value));
+        vim.cmd(string.format("%s dotnet build \"%s\"", term, current_picker.value));
     end
 
     dotnet_clean = function(prompt_bufnr)
         local current_picker = action_state.get_selected_entry(prompt_bufnr)
-        vim.cmd(string.format("!dotnet clean \"%s\"", current_picker.value));
+        vim.cmd(string.format("%s dotnet clean \"%s\"", term, current_picker.value));
     end
     
     -- Relies on the dotnet-format:
@@ -22,23 +26,23 @@ dotnet_picker = function(opts)
     -- dotnet tool install -g dotnet-format
     dotnet_format = function(prompt_bufnr)
         local current_picker = action_state.get_selected_entry(prompt_bufnr)
-        vim.cmd(string.format("!dotnet-format \"%s\"", current_picker.value));
+        vim.cmd(string.format("%s dotnet-format \"%s\"", term, current_picker.value));
     end
 
     dotnet_run = function(prompt_bufnr)
         local current_picker = action_state.get_selected_entry(prompt_bufnr)
-        vim.cmd(string.format("!dotnet run -p \"%s\"", current_picker.value));
+        vim.cmd(string.format("%s dotnet run -p \"%s\"", term, current_picker.value));
     end
 
     dotnet_test = function(prompt_bufnr)
         local current_picker = action_state.get_selected_entry(prompt_bufnr)
-        vim.cmd(string.format("!dotnet test \"%s\"", current_picker.value));
+        vim.cmd(string.format("%s dotnet test \"%s\"", term, current_picker.value));
     end
 
     local cmd = { 'rg','-g', '*{csproj,sln}', '--files', '.' }
 
     pickers.new(opts, {
-        prompt_title = "dotnet",
+        prompt_title = "Dotnet Tools",
         finder = finders.new_oneshot_job(
             cmd,
             opts

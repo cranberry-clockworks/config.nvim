@@ -24,5 +24,3 @@ function! ToggleSpellCheck()
   echo "Language:" g:languageList[g:selectedLanguage]
 endf
 
-map <F7> :call ToggleSpellCheck()<CR>
-imap <F7> <C-o>:call ToggleSpellCheck()<CR>
