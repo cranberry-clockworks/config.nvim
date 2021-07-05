@@ -1,3 +1,13 @@
+" Quick list
+nnoremap <C-j> :cnext<CR>
+nnoremap <C-k> :cprev<CR>
+nnoremap <C-l><C-l> :cclose<CR>
+
+" Local list
+nnoremap <M-j> :lnext<CR>
+nnoremap <M-k> :lprev<CR>
+nnoremap <M-l><M-l> :lclose<CR>
+
 nnoremap <F7> :call ToggleSpellCheck()<CR>
 inoremap <F7> <C-o>:call ToggleSpellCheck()<CR>
 
