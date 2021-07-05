@@ -37,6 +37,7 @@ set expandtab smarttab autoindent tabstop=4 softtabstop=4 shiftwidth=4
 
 " Appearance settings
 colorscheme gruvbox
+let g:gruvbox_contrast_dark='soft'
 
 " Enable syntax highlighting
 syntax on
@@ -59,7 +60,6 @@ set ruler showcmd showmode
 " Highlight search items
 set incsearch
 
-set fileformat=unix
 set encoding=utf-8
 set ffs=unix,dos
 
