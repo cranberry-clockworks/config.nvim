@@ -1,0 +1,5 @@
+require('knight.lsp')
+require('knight.dotnet')
+require('knight.treesitter')
+require('knight.telescope')
+require('knight.mappings')
