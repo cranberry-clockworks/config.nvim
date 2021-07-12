@@ -32,7 +32,6 @@ call plug#end()
 
 -- Essentials
 vim.cmd('language en_GB')
-vim.g.mapleader = " "
 vim.g.bulitin_lsp = true
 vim.opt.clipboard = 'unnamedplus'
 
@@ -77,4 +76,7 @@ vim.cmd('colorscheme gruvbox')
 vim.opt.encoding = 'utf-8'
 vim.opt.ffs = { 'dos', 'unix' }
 
+-- Netrw
+vim.g.netrw_banner=0
+vim.g.netrw_liststyle=3
 require('knight')

@@ -1,3 +1,7 @@
+-- Leader key
+vim.g.mapleader = " "
+vim.api.nvim_set_keymap('n', '<space>', '', { noremap = true })
+
 -- Quick lists
 vim.api.nvim_set_keymap('n', '<C-j>', "<cmd>cnext<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-k>', "<cmd>cprev<cr>", { noremap = true })
@@ -15,7 +19,7 @@ vim.api.nvim_set_keymap('n', '<leader>fb', "<cmd>lua require('telescope.builtin'
 vim.api.nvim_set_keymap('n', '<leader>fr', "<cmd>lua require('telescope.builtin').git_branches()<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>fs', "<cmd>lua require('telescope.builtin').git_status()<cr>", { noremap = true })
 
-vim.api.nvim_set_keymap('n', '<leader>fs', "<cmd>lua dotnet_picker()<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>fd', "<cmd>lua dotnet_picker()<cr>", { noremap = true })
 
 -- Other
 vim.api.nvim_set_keymap('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
