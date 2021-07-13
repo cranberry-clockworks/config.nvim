@@ -29,15 +29,15 @@ require'compe'.setup {
     vsnip = true;
     ultisnips = true;
     luasnip = true;
-  };
+};
 }
-
--- Fix the popup background color. Use 'soft' background from gruvbox theme.
-vim.cmd [[autocmd ColorScheme * highlight NormalFloat guibg=#32302f]]
 
 local on_attach = function(client)
     require'lsp_signature'.on_attach({
-        hint_prfix = '$ '
+        bind = true,
+        hint_prefix = "$ ",
+        handler_opts = { border = "single" },
+        extra_trigger_chars = { '(', ',' } 
     })
 
     local border = {
@@ -52,7 +52,6 @@ local on_attach = function(client)
     }  
 
     vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border})
-    vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border})
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -76,23 +75,35 @@ local on_attach = function(client)
     buf_set_keymap('n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '<leader>lq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader>ls", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
     buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
     buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
     buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
 
-    buf_set_keymap("n", "<M-q>", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
+    vim.api.nvim_exec([[
+        autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
+    ]], false)
 
     -- Set autocommands conditional on server_capabilities
     if client.resolved_capabilities.document_highlight then
         vim.api.nvim_exec([[
         augroup lsp_document_highlight
-          autocmd! * <buffer>
-          autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-          autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
         augroup END
         ]], false)
     end
 end
+
+-- Enable diagnostics
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
 
 -- Configure Rust-Analyzer language server for Rust
 -- https://github.com/neovim/nvim-lspconfig
@@ -124,12 +135,3 @@ require'lspconfig'.omnisharp.setup({
     on_attach = on_attach,
     cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) }
 })
-
--- Enable diagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
-    signs = true,
-    update_in_insert = true,
-  }
-)

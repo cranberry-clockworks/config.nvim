@@ -11,6 +11,7 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'hrsh7th/nvim-compe'
 Plug 'ray-x/lsp_signature.nvim'
+
 Plug 'skywind3000/asyncrun.vim'
 
 " Treesitter
@@ -69,7 +70,6 @@ vim.opt.signcolumn = 'yes'
 -- Colorscheme
 vim.opt.termguicolors = true
 vim.g.gruvbox_invert_selection='0'
-vim.g.gruvbox_contrast_dark='soft'
 vim.cmd('colorscheme gruvbox')
  
 -- Encoding and endings

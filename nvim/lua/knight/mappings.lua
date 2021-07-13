@@ -19,7 +19,12 @@ vim.api.nvim_set_keymap('n', '<leader>fb', "<cmd>lua require('telescope.builtin'
 vim.api.nvim_set_keymap('n', '<leader>fr', "<cmd>lua require('telescope.builtin').git_branches()<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>fs', "<cmd>lua require('telescope.builtin').git_status()<cr>", { noremap = true })
 
-vim.api.nvim_set_keymap('n', '<leader>fd', "<cmd>lua dotnet_picker()<cr>", { noremap = true })
+-- Dotnet tools
+vim.api.nvim_set_keymap('n', '<leader>db', "<cmd>lua dotnet_tool('build')<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>dc', "<cmd>lua dotnet_tool('clean')<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>df', "<cmd>lua dotnet_tool('format')<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua dotnet_tool('run')<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua dotnet_tool('test')<cr>", { noremap = true })
 
 -- Other
 vim.api.nvim_set_keymap('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
