@@ -57,10 +57,10 @@ function dotnet_tool(command)
     table.sort(results) 
 
     for i,r in ipairs(results) do
-        print(i, r)
+        print(string.format('%i. %s', i, r))
     end
 
-    i = tonumber(vim.call('input', string.format('Select project to %s:', command)))
+    i = tonumber(vim.call('input', string.format('Select project to %s: ', command)))
    
     if i == nil or i < 0 or i > table.maxn(results) then
         return
