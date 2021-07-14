@@ -28,4 +28,6 @@ vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua dotnet_tool('test')<cr>", {
 
 -- Other
 vim.api.nvim_set_keymap('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
---vim.api.nvim_set_keymap('n', '<leader>sl', "<cmd><cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>qb', "<cmd>bufdo bd<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>ee', "<cmd>lua toggle_spellcheck('en')<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>er', "<cmd>lua toggle_spellcheck('ru')<cr>", { noremap = true })
