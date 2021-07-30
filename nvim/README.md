@@ -1,4 +1,4 @@
-# Requirments for Windows
+# Requirements for Windows
 
 1. Plugin manager `vim-plug`.
 
