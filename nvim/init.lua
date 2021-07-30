@@ -5,6 +5,7 @@ call plug#begin()
 
 " Color scheme
 Plug 'morhetz/gruvbox'
+Plug 'jnurmine/Zenburn'
 
 " Auto complete via LSP
 Plug 'neovim/nvim-lspconfig'
@@ -16,6 +17,7 @@ Plug 'skywind3000/asyncrun.vim'
 
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 
 " Telescope
 Plug 'nvim-lua/popup.nvim'
@@ -29,12 +31,14 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 
 call plug#end()
+
+" Dev plugins
+let &runtimepath.=',C:\Users\Knight\Documents\GitHub\refactoring.nvim'
 ]], false)
 
 -- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
-vim.opt.clipboard = 'unnamedplus'
 
 -- Behaviours
 vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
@@ -64,7 +68,6 @@ vim.opt.shiftwidth = 4
 -- Appearance
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.cursorline = true
 vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
@@ -78,5 +81,4 @@ vim.opt.ffs = { 'dos', 'unix' }
 
 -- Netrw
 vim.g.netrw_banner=0
-vim.g.netrw_liststyle=3
 require('knight')

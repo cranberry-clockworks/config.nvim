@@ -139,15 +139,16 @@ require'lspconfig'.omnisharp.setup({
 
 -- Configure Sumneko language server for Lua
 -- https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
-local sumneko_root_path = 'C:/Program Files/nvim/lsp/sumneko-lua/'
-local sumneko_bin = sumneko_root_path .. 'bin/Windows/lua-language-server.exe'
+local sumneko_root = 'C:/Program Files/nvim/lsp/sumneko-lua/'
+local sumneko_bin = sumneko_root .. 'bin/Windows/lua-language-server.exe'
+local sumneko_main = sumneko_root .. 'main.lua'
 
 local sumneko_runtime_path = vim.split(package.path, ';')
 table.insert(sumneko_runtime_path, 'lua/?.lua')
 table.insert(sumneko_runtime_path, 'lua/?/init.lua')
 
 require('lspconfig').sumneko_lua.setup {
-  cmd = {sumneko_bin, "-E", sumneko_root_path .. '/main.lua'};
+  cmd = {sumneko_bin, '-E', sumneko_main};
   settings = {
     Lua = {
       runtime = {
