@@ -4,8 +4,8 @@ vim.api.nvim_exec(
 call plug#begin()
 
 " Color scheme
-Plug 'morhetz/gruvbox'
-Plug 'jnurmine/Zenburn'
+Plug 'rktjmp/lush.nvim'
+Plug 'npxbr/gruvbox.nvim'
 
 " Auto complete via LSP
 Plug 'neovim/nvim-lspconfig'
