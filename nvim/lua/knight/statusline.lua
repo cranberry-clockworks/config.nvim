@@ -17,10 +17,14 @@ local function get_git_branch()
 end
 
 local function get_lsp_info()
-    local hints = vim.lsp.diagnostic.get_count(0, 'Hint')
-    local warnings = vim.lsp.diagnostic.get_count(0, 'Warning')
-    local errors = vim.lsp.diagnostic.get_count(0, 'Error')
-    return string.format('H:%d W:%d E:%d ', hints, warnings, errors)
+    if vim.lsp.buf.server_ready() then
+        local hints = vim.lsp.diagnostic.get_count(0, 'Hint')
+        local warnings = vim.lsp.diagnostic.get_count(0, 'Warning')
+        local errors = vim.lsp.diagnostic.get_count(0, 'Error')
+        return string.format('H:%d W:%d E:%d ', hints, warnings, errors)
+    else
+        return '[No LSP]'
+    end
 end
 
 local function is_modified()

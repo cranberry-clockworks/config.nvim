@@ -1,3 +1,4 @@
+vim.lsp.set_log_level("debug")
 require'compe'.setup {
   enabled = true;
   autocomplete = true;
@@ -35,9 +36,9 @@ require'compe'.setup {
 local on_attach = function(client)
     require'lsp_signature'.on_attach({
         bind = true,
-        hint_prefix = "$ ",
+        hint_prefix = "> ",
         handler_opts = { border = "single" },
-        extra_trigger_chars = { '(', ',' } 
+        extra_trigger_chars = { '(', ',' },
     })
 
     local border = {
@@ -49,7 +50,7 @@ local on_attach = function(client)
         {"─", "FloatBorder"},
         {"╰", "FloatBorder"},
         {"│", "FloatBorder"},
-    }  
+    }
 
     vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border})
 
@@ -139,31 +140,40 @@ require'lspconfig'.omnisharp.setup({
 
 -- Configure Sumneko language server for Lua
 -- https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
-local sumneko_root = 'C:/Program Files/nvim/lsp/sumneko-lua/'
-local sumneko_bin = sumneko_root .. 'bin/Windows/lua-language-server.exe'
+local sumneko_root = 'C:/Program Files/nvim/lsp/lua-language-server/'
+local sumneko_bin = sumneko_root .. 'bin/Windows/lua-language-server'
 local sumneko_main = sumneko_root .. 'main.lua'
 
 local sumneko_runtime_path = vim.split(package.path, ';')
-table.insert(sumneko_runtime_path, 'lua/?.lua')
-table.insert(sumneko_runtime_path, 'lua/?/init.lua')
+table.insert(sumneko_runtime_path, "lua/?.lua")
+table.insert(sumneko_runtime_path, "lua/?/init.lua")
+
+local sumneko_libs = {}
+sumneko_libs[vim.fn.expand('$VIMRUNTIME/lua')] = true
+sumneko_libs[vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+sumneko_libs[vim.fn.stdpath("config") .. '/lua'] = true
+sumneko_libs[vim.fn.stdpath("config") .. '/plugged/plenary.nvim/lua'] = true
+sumneko_libs[vim.fn.stdpath("config") .. '/plugged/nvim-treesitter/lua'] = true
 
 require('lspconfig').sumneko_lua.setup {
-  cmd = {sumneko_bin, '-E', sumneko_main};
-  settings = {
-    Lua = {
-      runtime = {
-        version = 'LuaJIT',
-        path = sumneko_runtime_path,
-      },
-      diagnostics = {
-        globals = {'vim'},
-      },
-      workspace = {
-        library = vim.api.nvim_get_runtime_file("", true),
-      },
-      telemetry = {
-        enable = false,
-      },
+    on_attach = on_attach,
+    cmd = {sumneko_bin, '-E', sumneko_main};
+    settings = {
+        Lua = {
+            runtime = {
+                version = 'LuaJIT',
+                path = sumneko_runtime_path,
+            },
+            diagnostics = {
+                globals = {'vim'},
+            },
+            workspace = {
+                library = sumneko_libs,
+                preloadFileSize = 450,
+            },
+            telemetry = {
+                enable = false,
+            },
+        },
     },
-  },
 }
