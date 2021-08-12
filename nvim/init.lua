@@ -6,6 +6,8 @@ call plug#begin()
 " Color scheme
 Plug 'rktjmp/lush.nvim'
 Plug 'npxbr/gruvbox.nvim'
+Plug 'glepnir/zephyr-nvim'
+Plug 'savq/melange'
 
 " Auto complete via LSP
 Plug 'neovim/nvim-lspconfig'
@@ -30,10 +32,12 @@ Plug 'tpope/vim-fugitive'
 " Surroundings
 Plug 'tpope/vim-surround'
 
+Plug 'cranberry-knight/knife.nvim'
+
 call plug#end()
 
 " Dev plugins
-let &runtimepath.=',C:\Users\Knight\Documents\GitHub\refactoring.nvim'
+let &runtimepath.=',C:\Users\Knight\Documents\GitHub\knife'
 ]], false)
 
 -- Essentials
@@ -72,7 +76,7 @@ vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
 vim.opt.termguicolors = true
-vim.g.gruvbox_invert_selection='0'
+vim.g.gruvbox_invert_selection=0
 vim.cmd('colorscheme gruvbox')
  
 -- Encoding and endings

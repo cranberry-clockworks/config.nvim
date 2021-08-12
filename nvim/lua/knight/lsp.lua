@@ -1,37 +1,66 @@
 vim.lsp.set_log_level("debug")
 require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  resolve_timeout = 800;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = {
-    border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }, -- the border option is the same as `|help nvim_open_win|`
-    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  };
+    enabled = true;
+    autocomplete = true;
+    debug = false;
+    min_length = 1;
+    preselect = 'enable';
+    throttle_time = 80;
+    source_timeout = 200;
+    resolve_timeout = 800;
+    incomplete_delay = 400;
+    max_abbr_width = 100;
+    max_kind_width = 100;
+    max_menu_width = 100;
+    documentation = {
+        border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }, -- the border option is the same as `|help nvim_open_win|`
+        winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+        max_width = 120,
+        min_width = 60,
+        max_height = math.floor(vim.o.lines * 0.3),
+        min_height = 1,
+    };
 
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = true;
-    ultisnips = true;
-    luasnip = true;
-};
+    source = {
+        path = true;
+        buffer = true;
+        calc = true;
+        nvim_lsp = true;
+        nvim_lua = true;
+        vsnip = true;
+        ultisnips = true;
+        luasnip = true;
+    };
 }
+
+local icons = {
+    Class = "C class ",
+    Color = "⭘ color ",
+    Constant = "κ const ",
+    Constructor = "c constructor ",
+    Enum = "ξ enum ",
+    EnumMember = "ε enum value",
+    Field = "ℓ field ",
+    File = "■ file ",
+    Folder = "□ folder ",
+    Function = "ƒ fn ",
+    Interface = "Ï interface ",
+    Keyword = "κ keyword ",
+    Method = "ƒ method ",
+    Module = "∷ module ",
+    Property = "π property ",
+    Snippet = "⚡ snippet ",
+    Struct = "S struct ",
+    Text = "ä text ",
+    Unit = "ū unit ",
+    Value = "⌘ value ",
+    Variable = "μ variable ",
+}
+
+local kinds = vim.lsp.protocol.CompletionItemKind
+for i, kind in ipairs(kinds) do
+    kinds[i] = icons[kind] or kind
+end
 
 local on_attach = function(client)
     require'lsp_signature'.on_attach({
@@ -40,6 +69,8 @@ local on_attach = function(client)
         handler_opts = { border = "single" },
         extra_trigger_chars = { '(', ',' },
     })
+
+    vim.cmd [[autocmd ColorScheme * highlight NormalFloat guibg=#1f2335]]
 
     local border = {
         {"╭", "FloatBorder"},
@@ -154,6 +185,8 @@ sumneko_libs[vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/lua'] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/plugged/plenary.nvim/lua'] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/plugged/nvim-treesitter/lua'] = true
+-- Dev
+sumneko_libs['C:/Users/Knight/Documents/GitHub/knife/lua'] = true
 
 require('lspconfig').sumneko_lua.setup {
     on_attach = on_attach,
@@ -166,6 +199,7 @@ require('lspconfig').sumneko_lua.setup {
             },
             diagnostics = {
                 globals = {'vim'},
+                disable = { 'lowercase-global' }
             },
             workspace = {
                 library = sumneko_libs,
