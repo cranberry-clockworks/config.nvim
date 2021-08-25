@@ -4,9 +4,6 @@ vim.api.nvim_exec(
 call plug#begin()
 
 " Color scheme
-Plug 'rktjmp/lush.nvim'
-Plug 'npxbr/gruvbox.nvim'
-Plug 'glepnir/zephyr-nvim'
 Plug 'savq/melange'
 
 " Auto complete via LSP
@@ -69,6 +66,11 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
+-- Text width
+local textwidth = 100
+vim.opt.textwidth = textwidth
+vim.cmd(string.format("set colorcolumn=%i", textwidth))
+
 -- Appearance
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -76,11 +78,11 @@ vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
 vim.opt.termguicolors = true
-vim.g.gruvbox_invert_selection=0
-vim.cmd('colorscheme gruvbox')
- 
+vim.cmd('colorscheme melange')
+
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'
+vim.opt.bomb = true
 vim.opt.ffs = { 'dos', 'unix' }
 
 -- Netrw
