@@ -1,37 +1,29 @@
-vim.lsp.set_log_level("debug")
-require'compe'.setup {
-    enabled = true;
-    autocomplete = true;
-    debug = false;
-    min_length = 1;
-    preselect = 'enable';
-    throttle_time = 80;
-    source_timeout = 200;
-    resolve_timeout = 800;
-    incomplete_delay = 400;
-    max_abbr_width = 100;
-    max_kind_width = 100;
-    max_menu_width = 100;
-    documentation = {
-        border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }, -- the border option is the same as `|help nvim_open_win|`
-        winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
-        max_width = 120,
-        min_width = 60,
-        max_height = math.floor(vim.o.lines * 0.3),
-        min_height = 1,
-    };
+local cmp = require('cmp')
 
-    source = {
-        path = true;
-        buffer = true;
-        calc = true;
-        nvim_lsp = true;
-        nvim_lua = true;
-        vsnip = true;
-        ultisnips = true;
-        luasnip = true;
-    };
-}
+cmp.setup({
+    completion = {
+        autocomplete = true
+    },
+    snippet = {
+        expand = function(args)
+        end,
+    },
+    mapping = {
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'buffer' },
+    },
+    documentation = {
+        border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
+    }
+
+})
 
 local icons = {
     Class = "C class ",
@@ -49,7 +41,7 @@ local icons = {
     Method = "ƒ method ",
     Module = "∷ module ",
     Property = "π property ",
-    Snippet = "⚡ snippet ",
+    Snippet = "⚡snippet ",
     Struct = "S struct ",
     Text = "ä text ",
     Unit = "ū unit ",
@@ -63,14 +55,16 @@ for i, kind in ipairs(kinds) do
 end
 
 local on_attach = function(client)
-    require'lsp_signature'.on_attach({
+    require('lsp_signature').on_attach({
         bind = true,
         hint_prefix = "> ",
         handler_opts = { border = "single" },
         extra_trigger_chars = { '(', ',' },
     })
 
-    vim.cmd [[autocmd ColorScheme * highlight NormalFloat guibg=#1f2335]]
+    capabilities = require('cmp_nvim_lsp').update_capabilities(
+        vim.lsp.protocol.make_client_capabilities()
+    )
 
     local border = {
         {"╭", "FloatBorder"},
@@ -83,12 +77,12 @@ local on_attach = function(client)
         {"│", "FloatBorder"},
     }
 
-    vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border})
+    vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, { border = border })
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    --Enable completion triggered by <c-x><c-o>
+    -- Enable completion triggered by <C-X><C-O>
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     -- Mappings.
@@ -115,17 +109,6 @@ local on_attach = function(client)
     vim.api.nvim_exec([[
         autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost * lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
     ]], false)
-
-    -- Set autocommands conditional on server_capabilities
-    if client.resolved_capabilities.document_highlight then
-        vim.api.nvim_exec([[
-        augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-        augroup END
-        ]], false)
-    end
 end
 
 -- Enable diagnostics
@@ -139,7 +122,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 
 -- Configure Rust-Analyzer language server for Rust
 -- https://github.com/neovim/nvim-lspconfig
-require'lspconfig'.rust_analyzer.setup({
+require('lspconfig').rust_analyzer.setup({
     on_attach=on_attach,
     settings = {
         ["rust-analyzer"] = {
@@ -163,7 +146,7 @@ require'lspconfig'.rust_analyzer.setup({
 local pid = vim.fn.getpid()
 local omnisharp_bin = "C:/Program Files/nvim/lsp/omnisharp-win-x64/OmniSharp.exe"
 
-require'lspconfig'.omnisharp.setup({
+require('lspconfig').omnisharp.setup({
     on_attach = on_attach,
     cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) }
 })
@@ -185,6 +168,7 @@ sumneko_libs[vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/lua'] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/plugged/plenary.nvim/lua'] = true
 sumneko_libs[vim.fn.stdpath("config") .. '/plugged/nvim-treesitter/lua'] = true
+
 -- Dev
 sumneko_libs['C:/Users/Knight/Documents/GitHub/knife/lua'] = true
 

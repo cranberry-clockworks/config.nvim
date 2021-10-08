@@ -33,4 +33,5 @@ vim.api.nvim_set_keymap('n', '<leader>ee', "<cmd>lua toggle_spellcheck('en')<cr>
 vim.api.nvim_set_keymap('n', '<leader>er', "<cmd>lua toggle_spellcheck('ru')<cr>", { noremap = true })
 
 -- Knife
-vim.api.nvim_set_keymap('n', '<leader>lg', "<cmd>lua require('knife').generate_xmldoc_under_cursor()<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>kg', "<cmd>lua require('knife').generate_xmldoc_under_cursor()<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>kr', "<cmd>lua require('knife').rename_with_file()<cr>", { noremap = true })

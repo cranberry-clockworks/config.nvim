@@ -4,12 +4,19 @@ vim.api.nvim_exec(
 call plug#begin()
 
 " Color scheme
-Plug 'savq/melange'
+Plug 'cranberry-knight/mirror.nvim'
+
+" LSP Configuration
+Plug 'neovim/nvim-lspconfig'
+
+" Inline hints
+Plug 'nvim-lua/lsp_extensions.nvim'
 
 " Auto complete via LSP
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/lsp_extensions.nvim'
-Plug 'hrsh7th/nvim-compe'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/nvim-cmp'
+
+" LSP signature help
 Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'skywind3000/asyncrun.vim'
@@ -34,7 +41,7 @@ Plug 'cranberry-knight/knife.nvim'
 call plug#end()
 
 " Dev plugins
-let &runtimepath.=',C:\Users\Knight\Documents\GitHub\knife'
+" let &runtimepath.=',C:\Users\Knight\Documents\GitHub\knife.nvim'
 ]], false)
 
 -- Essentials
@@ -77,8 +84,7 @@ vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
-vim.opt.termguicolors = true
-vim.cmd('colorscheme melange')
+vim.cmd('colorscheme mirror')
 
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'
@@ -87,4 +93,5 @@ vim.opt.ffs = { 'dos', 'unix' }
 
 -- Netrw
 vim.g.netrw_banner=0
+
 require('knight')

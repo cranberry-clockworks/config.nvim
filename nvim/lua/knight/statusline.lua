@@ -45,7 +45,7 @@ local function get_file_info()
     if vim.bo.bomb then
         encoding = encoding .. " bom"
     end
-   
+
     return string.format('%s[%s][%s]',
         filetype,
         encoding,
