@@ -18,6 +18,7 @@ vim.api.nvim_set_keymap('n', '<leader>fg', "<cmd>lua require('telescope.builtin'
 vim.api.nvim_set_keymap('n', '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>fr', "<cmd>lua require('telescope.builtin').git_branches()<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>fs', "<cmd>lua require('telescope.builtin').git_status()<cr>", { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>fz', "<cmd>lua require('telescope.builtin').spell_suggest()<cr>", { noremap = true })
 
 -- Dotnet tools
 vim.api.nvim_set_keymap('n', '<leader>db', "<cmd>lua dotnet_tool('build')<cr>", { noremap = true })
@@ -27,10 +28,18 @@ vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua dotnet_tool('run')<cr>", { 
 vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua dotnet_tool('test')<cr>", { noremap = true })
 
 -- Other
+vim.api.nvim_set_keymap('n', '<leader>sw', "<cmd>lua set_text_width()<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>qb', "<cmd>bufdo bd<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>ee', "<cmd>lua toggle_spellcheck('en')<cr>", { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>er', "<cmd>lua toggle_spellcheck('ru')<cr>", { noremap = true })
+
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
+-- TODO add column enable-disable
 
 -- Knife
 vim.api.nvim_set_keymap('n', '<leader>kg', "<cmd>lua require('knife').generate_xmldoc_under_cursor()<cr>", { noremap = true })

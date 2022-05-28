@@ -1,7 +1,14 @@
 require 'nvim-treesitter.install'.compilers = { "clang" }
 
 require'nvim-treesitter.configs'.setup {
---    ensure_installed = {"rust", "c_sharp"},
+    ensure_installed = {
+        "rust",
+        "c_sharp",
+        "comment",
+        "html",
+        "lua",
+        "python"
+    },
     highlight = {
         enable = true,
     },

@@ -4,7 +4,7 @@ vim.api.nvim_exec(
 call plug#begin()
 
 " Color scheme
-Plug 'cranberry-knight/mirror.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
 
 " LSP Configuration
 Plug 'neovim/nvim-lspconfig'
@@ -13,11 +13,13 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp_extensions.nvim'
 
 " Auto complete via LSP
+Plug 'L3MON4D3/LuaSnip'
 Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/nvim-cmp'
-
-" LSP signature help
-Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'skywind3000/asyncrun.vim'
 
@@ -48,6 +50,12 @@ call plug#end()
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
+-- Neovide client
+vim.opt.guifont="JetBrains Mono:h12"
+vim.g.neovide_refresh_rate=60
+vim.g.neovide_cursor_trail_size=0
+vim.g.neovide_cursor_trail_length=0
+
 -- Behaviours
 vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
 vim.opt.hidden = true
@@ -74,7 +82,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Text width
-local textwidth = 100
+local textwidth = 120
 vim.opt.textwidth = textwidth
 vim.cmd(string.format("set colorcolumn=%i", textwidth))
 
@@ -84,7 +92,7 @@ vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
-vim.cmd('colorscheme mirror')
+vim.cmd('colorscheme gruvbox')
 
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'

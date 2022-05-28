@@ -18,12 +18,9 @@ end
 
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
-        local hints = vim.lsp.diagnostic.get_count(0, 'Hint')
-        local warnings = vim.lsp.diagnostic.get_count(0, 'Warning')
-        local errors = vim.lsp.diagnostic.get_count(0, 'Error')
-        return string.format('H:%d W:%d E:%d ', hints, warnings, errors)
+        return ' ● '
     else
-        return '[No LSP]'
+        return ' ⭘ '
     end
 end
 
