@@ -1,57 +1,74 @@
--- Plugins
-vim.api.nvim_exec(
-[[
-call plug#begin()
+-- Install packer if not present
+local packer_path = vim.fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
+    vim.fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', packer_path})
+    vim.cmd('packadd packer.nvim')
+end
 
-" Color scheme
-Plug 'ellisonleao/gruvbox.nvim'
+vim.g.mapleader = " "
 
-" LSP Configuration
-Plug 'neovim/nvim-lspconfig'
-
-" Inline hints
-Plug 'nvim-lua/lsp_extensions.nvim'
-
-" Auto complete via LSP
-Plug 'L3MON4D3/LuaSnip'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
-Plug 'hrsh7th/nvim-cmp'
-
-Plug 'skywind3000/asyncrun.vim'
-
-" Treesitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
-
-" Telescope
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-
-" Git
-Plug 'tpope/vim-fugitive'
-
-" Surroundings
-Plug 'tpope/vim-surround'
-
-Plug 'cranberry-knight/knife.nvim'
-
-call plug#end()
-
-" Dev plugins
-" let &runtimepath.=',C:\Users\Knight\Documents\GitHub\knife.nvim'
-]], false)
+-- Dependancies
+require('packer').startup(
+    function()
+        use 'wbthomason/packer.nvim'
+        use 'ellisonleao/gruvbox.nvim'
+        use 'tpope/vim-fugitive'
+        use 'tpope/vim-surround'
+        use {
+            'nvim-telescope/telescope.nvim',
+            requires = {
+                {'nvim-lua/popup.nvim'},
+                {'nvim-lua/plenary.nvim'},
+            },
+            config = function()
+                require('knight.telescope').setup()
+            end,
+        }
+        use {
+            'nvim-treesitter/nvim-treesitter',
+            run = ':TSUpdate',
+            config = function()
+                require('knight.treesitter').setup()
+            end,
+        }
+        use 'williamboman/nvim-lsp-installer'
+        use {
+            'hrsh7th/nvim-cmp',
+            requires = {
+                {'L3MON4D3/LuaSnip'},
+                {'hrsh7th/cmp-buffer'},
+                {'hrsh7th/cmp-path'},
+                {'hrsh7th/cmp-cmdline'},
+                {'hrsh7th/cmp-nvim-lsp-signature-help'},
+                {'hrsh7th/cmp-nvim-lsp'}
+            },
+            after = {'LuaSnip'},
+            config = function()
+                require('knight.cmp').setup()
+            end,
+        }
+        use {
+            'neovim/nvim-lspconfig',
+            after = {
+                'nvim-lsp-installer',
+                'nvim-cmp',
+                'cmp-nvim-lsp',
+                'telescope.nvim',
+            },
+            config = function()
+                require('knight.lsp').setup_lsp()
+            end,
+        }
+    end
+)
 
 -- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
+
 -- Neovide client
-vim.opt.guifont="JetBrains Mono:h12"
+vim.opt.guifont="JetBrains Mono:h11"
 vim.g.neovide_refresh_rate=60
 vim.g.neovide_cursor_trail_size=0
 vim.g.neovide_cursor_trail_length=0
