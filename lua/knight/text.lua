@@ -21,7 +21,7 @@ function M.set_soft_wrap()
 end
 
 local options = { noremap = true }
-vim.keymap.set('n', '<leader>wh', function() M.set_hard_wrap(120) end, options)
-vim.keymap.set('n', '<leader>ws', M.set_soft_wrap, options)
+vim.keymap.set('n', '<leader>th', function() M.set_hard_wrap(120) end, options)
+vim.keymap.set('n', '<leader>ts', M.set_soft_wrap, options)
 
 return M

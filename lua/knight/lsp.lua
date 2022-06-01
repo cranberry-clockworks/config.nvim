@@ -15,9 +15,18 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
     vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, options)
     vim.keymap.set('n', '<leader>lf', vim.lsp.buf.formatting, options)
-    vim.keymap.set('n', '<leader>ws', require("telescope.builtin").lsp_workspace_symbols, options)
     vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, options)
     vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, options)
+    vim.keymap.set(
+        'n',
+        '<leader>ws',
+        function ()
+            require("telescope.builtin").lsp_workspace_symbols(
+                require('knight.telescope').theme()
+            )
+        end,
+        options
+    )
 end
 
 function M.setup_lsp()
