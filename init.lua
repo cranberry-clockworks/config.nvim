@@ -59,6 +59,12 @@ require('packer').startup(
                 require('knight.lsp').setup_lsp()
             end,
         }
+        use {
+            'numToStr/Comment.nvim',
+            config = function()
+                require('Comment').setup()
+            end
+        }
     end
 )
 
