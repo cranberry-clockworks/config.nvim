@@ -105,9 +105,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Text width
-local textwidth = 120
-vim.opt.textwidth = textwidth
-vim.cmd(string.format("set colorcolumn=%i", textwidth))
+require('knight.text').set_hard_wrap(0)
 
 -- Appearance
 vim.opt.number = true
@@ -126,3 +124,4 @@ vim.opt.ffs = { 'dos', 'unix' }
 vim.g.netrw_banner=0
 
 require('knight')
+
