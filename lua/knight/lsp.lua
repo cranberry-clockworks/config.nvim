@@ -21,9 +21,7 @@ local on_attach = function(client, bufnr)
         'n',
         '<leader>ws',
         function ()
-            require("telescope.builtin").lsp_workspace_symbols(
-                require('knight.telescope').theme()
-            )
+            require("telescope.builtin").lsp_workspace_symbols({previewer = false})
         end,
         options
     )
