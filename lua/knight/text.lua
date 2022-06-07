@@ -5,19 +5,26 @@ local function set_text_width(width)
     vim.opt.colorcolumn = tostring(width)
 end
 
-function M.set_hard_wrap(width)
+function M.set_hard_wrap(width, quiet)
+    quiet = quiet or false
+
     local w = width or vim.call('input', 'Enter new text width: ')
     vim.cmd("set nowrap!")
     set_text_width(w)
 
-    vim.notify("Hard wrap is enabled at " .. w)
+    if quiet == false then
+        vim.notify("Hard wrap is enabled at " .. w)
+    end
 end
 
-function M.set_soft_wrap()
+function M.set_soft_wrap(quiet)
+    quiet = quiet or false
     vim.cmd("set wrap!")
     set_text_width(0)
 
-    vim.notify("Soft wrap is enabled")
+    if quiet == false then
+        vim.notify("Soft wrap is enabled")
+    end
 end
 
 local options = { noremap = true }
@@ -34,7 +41,7 @@ vim.api.nvim_create_autocmd(
         pattern = {
             '*.cs',
         },
-        callback = function() M.set_hard_wrap(120) end,
+        callback = function() M.set_hard_wrap(120, true) end,
     }
 )
 

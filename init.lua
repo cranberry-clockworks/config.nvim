@@ -105,7 +105,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Text width
-require('knight.text').set_hard_wrap(0)
+require('knight.text').set_hard_wrap(0, true)
 
 -- Appearance
 vim.opt.number = true
