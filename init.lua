@@ -65,6 +65,12 @@ require('packer').startup(
                 require('Comment').setup()
             end
         }
+        use {
+            'jose-elias-alvarez/null-ls.nvim',
+            config = function()
+                require('knight.null-ls').setup()
+            end
+        }
     end
 )
 
