@@ -1,6 +1,6 @@
 require('knight.cmp')
 require('knight.lsp')
-require('knight.dotnet')
+require('knight.make')
 require('knight.text')
 require('knight.telescope')
 require('knight.treesitter')
