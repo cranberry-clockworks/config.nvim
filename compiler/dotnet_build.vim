@@ -10,8 +10,8 @@ endif
 
 CompilerSet makeprg=dotnet\ build
 CompilerSet errorformat=
-    \%-AMicrosoft%.%#,
-    \%-ZBuild%.%#,
+    \%-ABuild%.%#,
+    \%-ZTime%.%#,
     \%-C%.%#,
     \%f(%l\\\,%c):\ %trror\ %m\ [%.%#],
     \%f(%l\\\,%c):\ %tarning\ %m\ [%.%#],

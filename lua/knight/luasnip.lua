@@ -3,8 +3,6 @@
 local M = {}
 
 function M.setup()
-    print("LOAD")
-
     ls.config.set_config({
         history = true,
     })
