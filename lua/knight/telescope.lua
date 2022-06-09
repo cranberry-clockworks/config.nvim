@@ -1,7 +1,10 @@
 local M = {}
 
 function M.setup()
-    require('telescope').setup ({
+    local telescope = require('telescope')
+    local builtin = require('telescope.builtin')
+
+    telescope.setup ({
         defaults = {
             layout_strategy = 'vertical',
             layout_config = {
@@ -23,19 +26,37 @@ function M.setup()
                 "--smart-case",
                 "--trim",
             },
+        },
+        pickers = {
+            find_files = {
+                previewer = false
+            },
+            buffers = {
+                previewer = false,
+                mappings = {
+                    i = { ['<C-w>'] = 'delete_buffer' },
+                    n = { ['<C-w>'] = 'delete_buffer' }
+                }
+            },
+            filetypes = {
+                previewer = false,
+            },
+            git_status = {
+                previewer = false,
+            },
         }
     })
 
-    local builtin = require('telescope.builtin')
-    local previewers = require('telescope.previewers')
+    telescope.load_extension('compiler')
+
     local options = { noremap = true }
-    vim.keymap.set('n', '<leader>ff', function() builtin.find_files({previewer = false}) end, options)
-    vim.keymap.set('n', '<leader>ft', function() builtin.filetypes({previewer = false}) end, options)
+    vim.keymap.set('n', '<leader>ff', builtin.find_files, options)
+    vim.keymap.set('n', '<leader>ft', builtin.filetypes, options)
     vim.keymap.set('n', '<leader>fg', builtin.live_grep, options)
-    vim.keymap.set('n', '<leader>fb', function() builtin.buffers({previewer = false}) end, options)
-    vim.keymap.set('n', '<leader>gb', function() builtin.git_branches({previewer = false}) end, options)
-    vim.keymap.set('n', '<leader>gs', function() builtin.git_status({previewer = false}) end, options)
-    vim.keymap.set('n', '<leader>fz', function() builtin.spell_suggest({previewer = false}) end, options)
+    vim.keymap.set('n', '<leader>fb', builtin.buffers, options)
+    vim.keymap.set('n', '<leader>gb', builtin.git_branches, options)
+    vim.keymap.set('n', '<leader>gs', builtin.git_status, options)
+    vim.keymap.set('n', '<leader>fz', builtin.spell_suggest, options)
 end
 
 return M

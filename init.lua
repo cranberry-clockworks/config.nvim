@@ -71,6 +71,10 @@ require('packer').startup(
                 require('knight.null-ls').setup()
             end
         }
+        use {
+            'cranberry-knight/telescope-compiler.nvim',
+            require = 'telescope.nvim',
+        }
     end
 )
 
