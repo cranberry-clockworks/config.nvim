@@ -33,9 +33,15 @@ require('packer').startup(
         }
         use 'williamboman/nvim-lsp-installer'
         use {
+            'L3MON4D3/LuaSnip',
+            config = function()
+                require('knight.luasnip').setup()
+            end,
+        }
+        use {
             'hrsh7th/nvim-cmp',
             requires = {
-                {'L3MON4D3/LuaSnip'},
+                { 'L3MON4D3/LuaSnip', },
                 {'hrsh7th/cmp-buffer'},
                 {'hrsh7th/cmp-path'},
                 {'hrsh7th/cmp-cmdline'},

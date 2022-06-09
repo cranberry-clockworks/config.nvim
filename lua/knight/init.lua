@@ -1,5 +1,6 @@
 require('knight.cmp')
 require('knight.lsp')
+require('knight.luasnip')
 require('knight.make')
 require('knight.text')
 require('knight.telescope')
