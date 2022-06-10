@@ -63,9 +63,10 @@ vim.api.nvim_create_user_command(
     'MakeAsync',
     M.make_async,
     {
+        desc = 'Execute :make async',
         nargs = "*",
         force = true,
-        desc = 'Execute :make async'
+        complete = 'file',
     }
 )
 
@@ -73,8 +74,9 @@ vim.api.nvim_create_user_command(
     'MakeSync',
     M.make_sync,
     {
+        desc = 'Execute :make sync',
         nargs = "*",
         force = true,
-        desc = 'Execute :make sync'
+        complete = 'file',
     }
 )
