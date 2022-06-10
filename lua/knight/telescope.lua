@@ -52,6 +52,7 @@ function M.setup()
     local options = { noremap = true }
     vim.keymap.set('n', '<leader>ff', builtin.find_files, options)
     vim.keymap.set('n', '<leader>ft', builtin.filetypes, options)
+    vim.keymap.set('n', '<leader>fc', '<cmd>Telescope compiler<cr>', options)
     vim.keymap.set('n', '<leader>fg', builtin.live_grep, options)
     vim.keymap.set('n', '<leader>fb', builtin.buffers, options)
     vim.keymap.set('n', '<leader>gb', builtin.git_branches, options)
