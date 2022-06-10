@@ -31,18 +31,4 @@ local options = { noremap = true }
 vim.keymap.set('n', '<leader>th', M.set_hard_wrap, options)
 vim.keymap.set('n', '<leader>ts', M.set_soft_wrap, options)
 
-vim.api.nvim_create_augroup('TextWrap', { clear = true })
-vim.api.nvim_create_autocmd(
-    {
-        'BufNew',
-        'BufRead',
-    },
-    {
-        pattern = {
-            '*.cs',
-        },
-        callback = function() M.set_hard_wrap(120, true) end,
-    }
-)
-
 return M
