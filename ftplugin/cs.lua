@@ -1,1 +1,1 @@
-﻿require('fun.spelling').set_hard_wrap(120, true)
+﻿require('fun').text.set_hard_wrap(120, true)
