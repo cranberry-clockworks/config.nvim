@@ -1,16 +1,27 @@
--- Leader key
-vim.api.nvim_set_keymap('n', '<space>', '', { noremap = true })
+local M = {}
 
--- Quick lists
-vim.api.nvim_set_keymap('n', '<C-j>', "<cmd>cnext<cr>", { noremap = true })
-vim.api.nvim_set_keymap('n', '<C-k>', "<cmd>cprev<cr>", { noremap = true })
--- vim.api.nvim_set_keymap('n', '<C-l><C-l>', "<cmd>cclose<cr>", { noremap = true })
---
--- Local lists
-vim.api.nvim_set_keymap('n', '<M-j>', "<cmd>lnext<cr>", { noremap = true })
-vim.api.nvim_set_keymap('n', '<M-k>', "<cmd>lprev<cr>", { noremap = true })
--- vim.api.nvim_set_keymap('n', '<M-l><M-l>', "<cmd>lclose<cr>", { noremap = true })
+function M.setup()
+    local optins = {
+        noremap = true,
+        silent = true
+    }
 
--- Other
-vim.api.nvim_set_keymap('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>qb', "<cmd>bufdo bd<cr>", { noremap = true })
+    -- Diagnostics
+    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
+    -- Quick lists
+    vim.keymap.set('n', '<c-down>', "<cmd>cnext<cr>", { noremap = true })
+    vim.keymap.set('n', '<c-up>', "<cmd>cprev<cr>", { noremap = true })
+
+    -- Local lists
+    vim.keymap.set('n', '<M-down>', "<cmd>lnext<cr>", { noremap = true })
+    vim.keymap.set('n', '<M-up>', "<cmd>lprev<cr>", { noremap = true })
+
+    -- Other
+    vim.keymap.set('n', '<leader>ss', "<cmd>nohlsearch<cr>", { noremap = true })
+end
+
+return M

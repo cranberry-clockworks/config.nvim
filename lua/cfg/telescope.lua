@@ -34,8 +34,8 @@ function M.setup()
             buffers = {
                 previewer = false,
                 mappings = {
-                    i = { ['<C-w>'] = 'delete_buffer' },
-                    n = { ['<C-w>'] = 'delete_buffer' }
+                    i = { ['<c-w>'] = 'delete_buffer' },
+                    n = { ['<c-w>'] = 'delete_buffer' }
                 }
             },
             filetypes = {
@@ -49,7 +49,11 @@ function M.setup()
 
     telescope.load_extension('compiler')
 
-    local options = { noremap = true }
+    local builtin = require('telescope.builtin')
+    local options = {
+        noremap = true,
+        silent = true,
+    }
     vim.keymap.set('n', '<leader>ff', builtin.find_files, options)
     vim.keymap.set('n', '<leader>ft', builtin.filetypes, options)
     vim.keymap.set('n', '<leader>fc', '<cmd>Telescope compiler<cr>', options)

@@ -132,3 +132,5 @@ vim.opt.ffs = { 'dos', 'unix' }
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro nu rnu"
 vim.g.netrw_list_hide = '^\\./$'
+
+cfg.mappings.setup()
