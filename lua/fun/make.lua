@@ -53,14 +53,14 @@ function M.make_async(opts)
     job:start()
 end
 
-function M.make_sync(opts)
+function M.make_term(opts)
     vim.cmd('split')
     local cmd = string.format('%s %s', vim.o.makeprg, opts.args)
     vim.cmd(string.format('term %s', cmd))
 end
 
 vim.api.nvim_create_user_command(
-    'MakeAsync',
+    'Make',
     M.make_async,
     {
         desc = 'Execute :make async',
@@ -71,8 +71,8 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
-    'MakeSync',
-    M.make_sync,
+    'MakeT',
+    M.make_term,
     {
         desc = 'Execute :make sync',
         nargs = "*",
