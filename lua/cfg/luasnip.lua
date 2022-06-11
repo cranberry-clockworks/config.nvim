@@ -1,8 +1,8 @@
-﻿local ls = require('luasnip')
-
-local M = {}
+﻿local M = {}
 
 function M.setup()
+    local ls = require('luasnip')
+
     ls.config.set_config({
         history = true,
     })

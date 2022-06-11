@@ -27,7 +27,7 @@ local on_attach = function(client, bufnr)
     )
 end
 
-function M.setup_lsp()
+function M.setup()
     vim.diagnostic.config({
         virtual_text = true,
         signs = true,

@@ -5,38 +5,42 @@ if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
     vim.cmd('packadd packer.nvim')
 end
 
+local cfg = require('cfg')
+local fun = require('fun')
+
 vim.g.mapleader = " "
 
 -- Dependancies
 require('packer').startup(
     function()
-        use 'wbthomason/packer.nvim'
-        use 'ellisonleao/gruvbox.nvim'
-        use 'tpope/vim-fugitive'
-        use 'tpope/vim-surround'
+        use { 'wbthomason/packer.nvim' }
+        use { 'ellisonleao/gruvbox.nvim' }
+        use { 'tpope/vim-fugitive' }
+        use { 'tpope/vim-surround' }
+        use {
+            'cranberry-knight/telescope-compiler.nvim',
+            require = 'telescope.nvim',
+        }
         use {
             'nvim-telescope/telescope.nvim',
             requires = {
                 {'nvim-lua/popup.nvim'},
                 {'nvim-lua/plenary.nvim'},
             },
-            config = function()
-                require('knight.telescope').setup()
-            end,
+            after = {
+                'telescope-compiler.nvim',
+            },
+            config = cfg.telescope.setup,
         }
         use {
             'nvim-treesitter/nvim-treesitter',
             run = ':TSUpdate',
-            config = function()
-                require('knight.treesitter').setup()
-            end,
+            config = cfg.treesitter.setup,
         }
         use 'williamboman/nvim-lsp-installer'
         use {
             'L3MON4D3/LuaSnip',
-            config = function()
-                require('knight.luasnip').setup()
-            end,
+            config = cfg.luasnip.setup,
         }
         use {
             'hrsh7th/nvim-cmp',
@@ -49,9 +53,7 @@ require('packer').startup(
                 {'hrsh7th/cmp-nvim-lsp'}
             },
             after = {'LuaSnip'},
-            config = function()
-                require('knight.cmp').setup()
-            end,
+            config = cfg.cmp.setup,
         }
         use {
             'neovim/nvim-lspconfig',
@@ -61,25 +63,15 @@ require('packer').startup(
                 'cmp-nvim-lsp',
                 'telescope.nvim',
             },
-            config = function()
-                require('knight.lsp').setup_lsp()
-            end,
+            config = cfg.lsp.setup
         }
         use {
             'numToStr/Comment.nvim',
-            config = function()
-                require('Comment').setup()
-            end
+            config = cfg.comment.setup,
         }
         use {
             'jose-elias-alvarez/null-ls.nvim',
-            config = function()
-                require('knight.null-ls').setup()
-            end
-        }
-        use {
-            'cranberry-knight/telescope-compiler.nvim',
-            require = 'telescope.nvim',
+            config = cfg.nullls.setup,
         }
     end
 )
@@ -121,7 +113,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Text width
-require('knight.text').set_hard_wrap(0, true)
+fun.text.set_hard_wrap(0, true)
 
 -- Appearance
 vim.opt.number = true
@@ -138,6 +130,3 @@ vim.opt.ffs = { 'dos', 'unix' }
 
 -- Netrw
 vim.g.netrw_banner=0
-
-require('knight')
-
