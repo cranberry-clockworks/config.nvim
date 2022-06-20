@@ -2,11 +2,12 @@
 
 function M.setup()
     local nls = require('null-ls')
-    local settings = vim.opt.runtimepath:get()[1] .. 'vale.ini'
+    local config = vim.fn.expand(vim.opt.runtimepath:get()[1] .. '/vale.ini')
     nls.setup({
         sources = {
             nls.builtins.diagnostics.vale.with({
-                '--config="'.. settings .. '"'
+                extra_args = { '--config', config },
+                extra_filetypes = { 'gitcommit' },
             }),
         },
     })
