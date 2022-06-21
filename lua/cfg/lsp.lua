@@ -45,8 +45,16 @@ function M.setup()
     configuration.sumneko_lua.setup({
         on_attach = map_keys,
         capabilities = capabilities,
-        diagnostic = {
-            globals = { 'vim' }
+        settings = {
+            Lua = {
+                diagnostics = {
+                    globals = { "vim" }
+                }
+            }
+        },
+        workspace = {
+            -- Make the server aware of Neovim runtime files
+            library = vim.api.nvim_get_runtime_file("", true),
         },
     })
 end
