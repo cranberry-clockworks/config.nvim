@@ -12,23 +12,17 @@ vim.g.mapleader = " "
 
 -- Dependancies
 require('packer').startup(
-    function()
-        use { 'wbthomason/packer.nvim' }
-        use { 'ellisonleao/gruvbox.nvim' }
-        use { 'tpope/vim-fugitive' }
-        use { 'tpope/vim-surround' }
-        use {
-            'cranberry-knight/telescope-compiler.nvim',
-            require = 'telescope.nvim',
-        }
+    function(use)
+        use 'wbthomason/packer.nvim'
+        use 'ellisonleao/gruvbox.nvim'
+        use 'tpope/vim-fugitive'
+        use 'tpope/vim-surround'
         use {
             'nvim-telescope/telescope.nvim',
             requires = {
-                {'nvim-lua/popup.nvim'},
-                {'nvim-lua/plenary.nvim'},
-            },
-            after = {
-                'telescope-compiler.nvim',
+                'nvim-lua/popup.nvim',
+                'nvim-lua/plenary.nvim',
+                'cranberry-knight/telescope-compiler.nvim',
             },
             config = cfg.telescope.setup,
         }
@@ -37,7 +31,19 @@ require('packer').startup(
             run = ':TSUpdate',
             config = cfg.treesitter.setup,
         }
-        use 'williamboman/nvim-lsp-installer'
+        use {
+            'neovim/nvim-lspconfig',
+            requires = {
+                'williamboman/nvim-lsp-installer',
+                'hrsh7th/cmp-nvim-lsp',
+            },
+            after = {
+                'nvim-lsp-installer',
+                'telescope.nvim',
+            },
+            wants = 'nvim-lsp-installer',
+            config = cfg.lsp.setup
+        }
         use {
             'L3MON4D3/LuaSnip',
             config = cfg.luasnip.setup,
@@ -45,25 +51,17 @@ require('packer').startup(
         use {
             'hrsh7th/nvim-cmp',
             requires = {
-                { 'L3MON4D3/LuaSnip', },
-                {'hrsh7th/cmp-buffer'},
-                {'hrsh7th/cmp-path'},
-                {'hrsh7th/cmp-cmdline'},
-                {'hrsh7th/cmp-nvim-lsp-signature-help'},
-                {'hrsh7th/cmp-nvim-lsp'}
+                'L3MON4D3/LuaSnip',
+                'hrsh7th/cmp-buffer',
+                'hrsh7th/cmp-path',
+                'hrsh7th/cmp-cmdline',
+                'hrsh7th/cmp-nvim-lsp-signature-help',
             },
-            after = {'LuaSnip'},
-            config = cfg.cmp.setup,
-        }
-        use {
-            'neovim/nvim-lspconfig',
             after = {
-                'nvim-lsp-installer',
-                'nvim-cmp',
-                'cmp-nvim-lsp',
-                'telescope.nvim',
+                'LuaSnip',
+                'nvim-lspconfig'
             },
-            config = cfg.lsp.setup
+            config = cfg.cmp.setup,
         }
         use {
             'numToStr/Comment.nvim',
@@ -79,7 +77,6 @@ require('packer').startup(
 -- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
-
 
 -- Neovide client
 vim.opt.guifont="JetBrains Mono:h11"
