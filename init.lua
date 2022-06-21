@@ -5,10 +5,10 @@ if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
     vim.cmd('packadd packer.nvim')
 end
 
+vim.g.mapleader = " "
+
 local cfg = require('cfg')
 local fun = require('fun')
-
-vim.g.mapleader = " "
 
 -- Dependancies
 require('packer').startup(
