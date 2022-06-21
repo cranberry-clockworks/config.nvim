@@ -18,18 +18,10 @@ end
 
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
-        return ' ● '
+        return string.format('[%d]', #vim.diagnostic.get())
     else
-        return ' ⭘ '
+        return '[*]'
     end
-end
-
-local function is_modified()
-    if vim.bo.modified then
-        return ' [+]'
-    end
-
-    return ''
 end
 
 local function get_file_info()
@@ -50,19 +42,20 @@ local function get_file_info()
     )
 end
 
-function get_flags()
+local function get_flags()
     return '%h%w%m%r'
 end
 
-function get_file_name()
+local function get_file_name()
     return '%<%f'
 end
 
-function color_as(value, group)
+local function color_as(value, group)
     return string.format('%%#%s#%s', group, value)
 end
 
-local status_line_template = '%s%s%%=%s%%=%s%s'
+-- local status_line_template = '%s%s%%=%s%%=%s%s'
+local status_line_template = '%s%s%%=%s%%=%s'
 
 function RenderStatusLine()
     return string.format(
@@ -70,11 +63,10 @@ function RenderStatusLine()
         color_as(get_lsp_info(), 'StatusLineNC'),
         color_as(get_flags(), 'StatusLine'),
         color_as(get_file_name(), 'StatusLine'),
-        color_as(get_git_branch(), 'StatusLineNC'),
+        -- color_as(get_git_branch(), 'StatusLineNC'),
         color_as(get_file_info(), 'StatusLineNC')
-    )  
+    )
 
 end
 
 vim.o.statusline = '%!v:lua.RenderStatusLine()'
-
