@@ -1,33 +1,51 @@
 ﻿local fun = require('fun')
+local dotnet = require('dotnet')
+
 fun.text.set_hard_wrap(120, true)
 
-local function analyze(opts)
-    local fargs = opts.args
-    local staged = fun.git.get_staged()
-    local args = string.format('--include="%s" %s', table.concat(staged, ';'), fargs)
-
-    vim.cmd('compiler resharper_inspect')
-    local efm = vim.o.efm
-    local output = vim.g.resharper_inspect_output
-
-    vim.cmd('make ' .. args)
-    vim.o.efm = ' %#%f:%l %m,%-G%.%#'
-    vim.cmd('cfile '..output)
-    vim.cmd('copen')
-    vim.o.efm = efm
-end
-
 vim.api.nvim_create_user_command(
-    'ReSharperInspectStaged',
-    analyze,
+    'DotnetTarget',
+    function(opts)
+        dotnet.set_target(opts.args, opts.bang)
+    end,
     {
-        desc = 'Analyze staged git files with ReSharper CLI InspectCode',
-        nargs = "*",
+        nargs = 1,
+        complete = 'file',
         force = true,
-        complete = 'file'
     }
 )
 
+vim.api.nvim_create_user_command(
+    'DotnetBuild',
+    dotnet.build,
+    {
+        nargs = 0,
+        force = true,
+    }
+)
+
+vim.api.nvim_create_user_command(
+    'DotnetRun',
+    dotnet.run,
+    {
+        nargs = 0,
+        force = true,
+    }
+)
+
+vim.api.nvim_create_user_command(
+    'ReSharperInspectStaged',
+    function ()
+        local staged = fun.git.get_staged()
+        dotnet.inspect(staged)
+    end,
+    {
+        nargs = 0,
+        force = true,
+    }
+)
+
+-- Check spelling for code
 vim.wo.spell = true
 vim.bo.spellfile = vim.fn.expand(vim.fn.stdpath('config')..'/spell/csharp.utf-8.add')
 vim.bo.spelloptions = 'camel'
