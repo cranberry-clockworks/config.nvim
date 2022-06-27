@@ -50,4 +50,3 @@ vim.wo.spell = true
 vim.bo.spellfile = vim.fn.expand(vim.fn.stdpath('config')..'/spell/csharp.utf-8.add')
 vim.bo.spelloptions = 'camel'
 vim.bo.spellcapcheck = ''
-
