@@ -64,6 +64,43 @@ function M.get_configuration()
     return vim.b.dotnet_configuration or vim.g.dotnet_configuration or 'Debug'
 end
 
+function M.set_test_filter()
+    local function escape(test_name)
+        local s = test_name
+        s = string.gsub(s, '\\(', '\\\\(')
+        s = string.gsub(s, '\\)', '\\\\)')
+        s = string.gsub(s, '"', '\\"')
+        return s
+    end
+
+    local function explore()
+        local pickers = require('telescope.pickers')
+        local finders = require('telescope.finders')
+        local config = require('telescope.config').values
+        local actions = require('telescope.actions')
+        local action_state = require('telescope.actions.state')
+
+        pickers.new(
+            {},
+            {
+                prompt_tilte = 'dotnet tests',
+                sorter = config.generic_sorter(),
+                finder = finders.new_oneshot_job({'dotnet', 'test', '-t'}),
+                attach_mappings = function(prompt_bufnr, _)
+                    actions.select_default:replace(function()
+                        actions.close(prompt_bufnr)
+                        local selection = action_state.get_selected_entry().value
+                        vim.g.dotnet_test_filter = escape(selection)
+                    end)
+                    return true
+                end,
+            }
+        ):find()
+    end
+
+    explore()
+end
+
 function M.build()
     local target = M.get_target()
     if target == nil then
@@ -94,6 +131,7 @@ function M.run()
 end
 
 function M.test()
+    local filter = M.get_filter()
 end
 
 function M.inspect(files)

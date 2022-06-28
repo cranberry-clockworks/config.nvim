@@ -34,6 +34,15 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
+    'DotnetTestFilter',
+    dotnet.set_test_filter,
+    {
+        nargs = 0,
+        force = true
+    }
+)
+
+vim.api.nvim_create_user_command(
     'ReSharperInspectStaged',
     function ()
         local staged = fun.git.get_staged()
