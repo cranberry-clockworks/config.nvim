@@ -80,12 +80,35 @@ function M.set_test_filter()
         local actions = require('telescope.actions')
         local action_state = require('telescope.actions.state')
 
+        local output = false
         pickers.new(
             {},
             {
                 prompt_tilte = 'dotnet tests',
                 sorter = config.generic_sorter(),
-                finder = finders.new_oneshot_job({'dotnet', 'test', '-t'}),
+                finder = finders.new_oneshot_job(
+                    {'dotnet', 'test', '-t'},
+                    {
+                        entry_maker = function(entry)
+                            if output and string.find(entry, '^%s+') == nil then
+                                output = false
+                                return nil
+                            end
+                            if string.find(entry, '^The following Tests are available:') ~= nil then
+                                output = true
+                            end
+
+                            if output == false then
+                                return nil
+                            end
+
+                            return {
+                                value = entry,
+                                display = entry,
+                                ordinal = entry
+                            }
+                        end
+                    }),
                 attach_mappings = function(prompt_bufnr, _)
                     actions.select_default:replace(function()
                         actions.close(prompt_bufnr)
