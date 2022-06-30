@@ -18,7 +18,10 @@ end
 
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
-        return string.format('[%d]', #vim.diagnostic.get())
+        return string.format(
+            '[%d/%d]',
+            #vim.diagnostic.get(0),
+            #vim.diagnostic.get())
     else
         return '[*]'
     end
