@@ -46,6 +46,7 @@ end
 
 local M = {
     build_efm = '%-ABuild%.%#,%-ZTime%.%#,%-C%.%#,%f(%l\\,%c): %trror %m [%.%#],%f(%l\\,%c): %tarning %m [%.%#],%-G%.%#',
+    test_efm = '%E%.%#Failed %m [%.%#],%-C%.%#Error Message%.%#,%-C%.%#Stack Trace%.%#,%Z%.%#in %f:line %l,%C%m,Failed!%.%# - %m - %o %.%#,Passed!%.%# - %m - %o %.%#,%-G%.%#',
     resharper_inspect_cmd = 'jb InspectCode --absolute-paths --severity=HINT --no-build --format=Text',
     resharper_inspect_efm = ' %#%f:%l %m,%-G%.%#',
 }
@@ -192,7 +193,7 @@ function M.test()
         table.insert(args, filter)
     end
 
-    make('dotnet', args, '%m')
+    make('dotnet', args, M.test_efm)
 end
 
 function M.inspect(files)
