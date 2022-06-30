@@ -51,8 +51,30 @@ local M = {
 }
 
 function M.set_target(path)
-    vim.g.dotnet_target = path
-    print(string.format('Set dotnet target to: %s', path))
+    if #path > 0 then
+        vim.g.dotnet_target = path
+        vim.notify(string.format('Set dotnet target to: %s', vim.g.dotnet_target))
+        return
+    end
+
+    require('telescope.builtin').find_files({
+        prompt_tilte = 'Dotnet Targets',
+        find_command = {
+            'rg', '--files', '-g', '*.{sln,csproj}', '.'
+        },
+        attach_mappings = function ()
+            local actions = require('telescope.actions')
+            local action_state = require('telescope.actions.state')
+            actions.select_default:replace(function(buffer)
+                vim.g.dotnet_target = action_state.get_selected_entry().value
+                actions.close(buffer)
+                vim.schedule(function()
+                    vim.notify(string.format('Set dotnet target to: %s', vim.g.dotnet_target))
+                end)
+            end)
+            return true
+        end,
+    })
 end
 
 function M.get_target()
@@ -68,64 +90,58 @@ function M.get_configuration()
     return vim.g.dotnet_configuration or 'Debug'
 end
 
-function M.set_test_filter()
-    local function escape(test_name)
-        local s = test_name
-        s = string.gsub(s, '\\(', '\\\\(')
-        s = string.gsub(s, '\\)', '\\\\)')
-        s = string.gsub(s, '"', '\\"')
-        return s
+function M.set_test_filter(filter)
+    local function escape(test)
+        local t = test
+        t = string.gsub(t, '%(', '\\(')
+        t = string.gsub(t, '%)', '\\)')
+        t = string.gsub(t, '"', '\\"')
+        return t
     end
 
-    local function explore()
-        local pickers = require('telescope.pickers')
-        local finders = require('telescope.finders')
-        local config = require('telescope.config').values
-        local actions = require('telescope.actions')
-        local action_state = require('telescope.actions.state')
+    if #filter > 0 then
+        vim.g.dotnet_test_filter = escape(filter)
+        vim.notify(string.format('Set test filter to: %s', filter))
+        return
+    end
 
-        local output = false
-        pickers.new(
-            {},
-            {
-                prompt_tilte = 'dotnet tests',
-                sorter = config.generic_sorter(),
-                finder = finders.new_oneshot_job(
-                    {'dotnet', 'test', '-t'},
-                    {
-                        entry_maker = function(entry)
-                            if output and string.find(entry, '^%s+') == nil then
-                                output = false
-                                return nil
-                            end
-                            if string.find(entry, '^The following Tests are available:') ~= nil then
-                                output = true
-                            end
+    local pickers = require('telescope.pickers')
+    local finders = require('telescope.finders')
+    local config = require('telescope.config').values
+    local actions = require('telescope.actions')
+    local action_state = require('telescope.actions.state')
 
-                            if output == false then
-                                return nil
-                            end
-
+    pickers.new(
+        {},
+        {
+            prompt_tilte = 'dotnet tests',
+            sorter = config.generic_sorter(),
+            finder = finders.new_oneshot_job(
+                {'dotnet', 'test', '-t', '-v', 'q' },
+                {
+                    entry_maker = function(entry)
+                        local i, j = string.find(entry, '^%s+')
+                        if i ~= nil then
+                            local s = string.sub(entry, j)
                             return {
-                                value = entry,
-                                display = entry,
-                                ordinal = entry
+                                value = s,
+                                display = s,
+                                ordinal = s,
                             }
                         end
-                    }),
-                attach_mappings = function(prompt_bufnr, _)
-                    actions.select_default:replace(function()
-                        actions.close(prompt_bufnr)
-                        local selection = action_state.get_selected_entry().value
-                        vim.g.dotnet_test_filter = escape(selection)
-                    end)
-                    return true
-                end,
-            }
-        ):find()
-    end
-
-    explore()
+                        return nil
+                    end
+                }),
+            attach_mappings = function(prompt_bufnr, _)
+                actions.select_default:replace(function()
+                    actions.close(prompt_bufnr)
+                    local selection = action_state.get_selected_entry().value
+                    vim.g.dotnet_test_filter = escape(selection)
+                end)
+                return true
+            end,
+        }
+    ):find()
 end
 
 function M.build()

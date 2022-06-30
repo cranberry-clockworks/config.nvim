@@ -6,10 +6,10 @@ fun.text.set_hard_wrap(120, true)
 vim.api.nvim_create_user_command(
     'DotnetTarget',
     function(opts)
-        dotnet.set_target(opts.args, opts.bang)
+        dotnet.set_target(opts.args)
     end,
     {
-        nargs = 1,
+        nargs = '?',
         complete = 'file',
         force = true,
     }
@@ -35,15 +35,17 @@ vim.api.nvim_create_user_command(
 
 vim.api.nvim_create_user_command(
     'DotnetTestFilter',
-    dotnet.set_test_filter,
+    function (opts)
+        dotnet.set_test_filter(opts.args)
+    end,
     {
-        nargs = 0,
+        nargs = '?',
         force = true
     }
 )
 
 vim.api.nvim_create_user_command(
-    'ReSharperInspectStaged',
+    'DotnetInspect',
     function ()
         local staged = fun.git.get_staged()
         dotnet.inspect(staged)
