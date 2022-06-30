@@ -1,8 +1,20 @@
-﻿local quickfix = require('fun.quickfix')
+﻿local spiner = {
+    create = function()
+        return {
+            _index = 0,
+            _frames = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },
+            render_next = function(self)
+                self._index = self._index + 1
+                return self._frames[self._index % #self._frames + 1]
+            end
+        }
+    end
+}
 
-local function make_qf(cmd, args, efm)
+local function make(cmd, args, efm)
     local title = string.format('%s %s', cmd, table.concat(args, ' '))
 
+    local progress = spiner.create()
     local job = require('plenary').job:new({
         command = cmd,
         args = args,
@@ -10,7 +22,7 @@ local function make_qf(cmd, args, efm)
         on_stdout = function(_, data)
             vim.schedule(function()
                 vim.fn.setqflist({}, 'a', {
-                    title = title,
+                    title = string.format('%s %s', progress:render_next(), title),
                     lines = { data },
                     efm = efm,
                 })
@@ -19,6 +31,10 @@ local function make_qf(cmd, args, efm)
         on_exit = function(_, exit_code)
             vim.schedule(function()
                 vim.notify(string.format('"%s" finished with code: %d', title, exit_code))
+                vim.fn.setqflist({}, 'a', {
+                    title = title,
+                    lines = {}
+                })
             end)
         end,
     })
@@ -34,34 +50,22 @@ local M = {
     resharper_inspect_efm = ' %#%f:%l %m,%-G%.%#',
 }
 
-function M.set_target(path, global)
-    global = global or false
-    if global then
-        vim.g.dotnet_target = path
-        print(string.format('Set global dotnet target to: %s', path))
-    else
-        vim.b.dotnet_target = path
-        print(string.format('Set local dotnet target to: %s', path))
-    end
+function M.set_target(path)
+    vim.g.dotnet_target = path
+    print(string.format('Set dotnet target to: %s', path))
 end
 
 function M.get_target()
-    return vim.b.dotnet_target or vim.g.dotnet_target or nil
+    return vim.g.dotnet_target or nil
 end
 
-function M.set_configuration(value, global)
-    global = global or false
-    if global then
-        vim.g.dotnet_configuration = value
-        print(string.format('Set global dotnet configuration to: %s', value))
-    else
-        vim.b.dotnet_configuration = value
-        print(string.format('Set dotnet configuration to: %s', value))
-    end
+function M.set_configuration(value)
+    vim.g.dotnet_configuration = value
+    print(string.format('Set dotnet configuration to: %s', value))
 end
 
 function M.get_configuration()
-    return vim.b.dotnet_configuration or vim.g.dotnet_configuration or 'Debug'
+    return vim.g.dotnet_configuration or 'Debug'
 end
 
 function M.set_test_filter()
@@ -131,7 +135,7 @@ function M.build()
         return
     end
 
-    make_qf(
+    make(
         'dotnet',
         {
             'build',
@@ -176,7 +180,11 @@ function M.inspect(files)
         )
     )
 
-    quickfix.cfile(output, M.resharper_inspect_efm, 'ReSharper InspectCode result')
+    vim.fn.setqflist({}, 'a', {
+        title = 'ReSharper inspection of staged',
+        lines = vim.fn.readfile(output),
+        efm = M.resharper_inspect_efm,
+    })
     vim.cmd('copen')
 end
 
