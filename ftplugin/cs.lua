@@ -45,6 +45,15 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
+    'DotnetTest',
+    dotnet.test,
+    {
+        nargs = 0,
+        force = true
+    }
+)
+
+vim.api.nvim_create_user_command(
     'DotnetInspect',
     function ()
         local staged = fun.git.get_staged()

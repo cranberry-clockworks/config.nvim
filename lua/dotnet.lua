@@ -96,7 +96,7 @@ function M.set_test_filter(filter)
         t = string.gsub(t, '%(', '\\(')
         t = string.gsub(t, '%)', '\\)')
         t = string.gsub(t, '"', '\\"')
-        return t
+        return 'Name~'..t
     end
 
     if #filter > 0 then
@@ -114,7 +114,7 @@ function M.set_test_filter(filter)
     pickers.new(
         {},
         {
-            prompt_tilte = 'dotnet tests',
+            prompt_tilte = 'Dotnet Tests',
             sorter = config.generic_sorter(),
             finder = finders.new_oneshot_job(
                 {'dotnet', 'test', '-t', '-v', 'q' },
@@ -122,7 +122,7 @@ function M.set_test_filter(filter)
                     entry_maker = function(entry)
                         local i, j = string.find(entry, '^%s+')
                         if i ~= nil then
-                            local s = string.sub(entry, j)
+                            local s = string.sub(entry, j + 1)
                             return {
                                 value = s,
                                 display = s,
@@ -142,6 +142,10 @@ function M.set_test_filter(filter)
             end,
         }
     ):find()
+end
+
+function M.get_filter()
+    return vim.g.dotnet_test_filter
 end
 
 function M.build()
@@ -174,7 +178,21 @@ function M.run()
 end
 
 function M.test()
+    local target = M.get_target()
+    if target == nil then
+        print('No target is specified!')
+        return
+    end
+
+    local args = { 'test', target }
+
     local filter = M.get_filter()
+    if filter ~= nil then
+        table.insert(args, '--filter')
+        table.insert(args, filter)
+    end
+
+    make('dotnet', args, '%m')
 end
 
 function M.inspect(files)
