@@ -15,24 +15,10 @@ vim.api.nvim_create_user_command(
     }
 )
 
-vim.api.nvim_create_user_command(
-    'DotnetBuild',
-    dotnet.build,
-    {
-        nargs = 0,
-        force = true,
-    }
-)
-
-vim.api.nvim_create_user_command(
-    'DotnetRun',
-    dotnet.run,
-    {
-        nargs = 0,
-        force = true,
-    }
-)
-
+vim.api.nvim_create_user_command('DotnetBuild', dotnet.build, { nargs = 0, force = true, })
+vim.api.nvim_create_user_command('DotnetClean', dotnet.clean, { nargs = 0, force = true, })
+vim.api.nvim_create_user_command('DotnetRun', dotnet.run, { nargs = 0, force = true, })
+vim.api.nvim_create_user_command('DotnetTest', dotnet.test, { nargs = 0, force = true })
 vim.api.nvim_create_user_command(
     'DotnetTestFilter',
     function (opts)
@@ -42,15 +28,6 @@ vim.api.nvim_create_user_command(
         nargs = '?',
         force = true,
         bang = true
-    }
-)
-
-vim.api.nvim_create_user_command(
-    'DotnetTest',
-    dotnet.test,
-    {
-        nargs = 0,
-        force = true
     }
 )
 

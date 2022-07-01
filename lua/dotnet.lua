@@ -178,6 +178,16 @@ function M.build()
     )
 end
 
+function M.clean()
+    local target = M.get_target()
+    if target == nil then
+        print('No target is specified!')
+        return
+    end
+
+    vim.cmd(string.format('!dotnet clean "%s"', target))
+end
+
 function M.run()
     local target = M.get_target()
     if target == nil then
