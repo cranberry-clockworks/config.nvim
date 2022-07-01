@@ -15,15 +15,17 @@ local function make(cmd, args, efm)
     local title = string.format('%s %s', cmd, table.concat(args, ' '))
 
     local progress = spiner.create()
+    local stdout = {}
     local job = require('plenary').job:new({
         command = cmd,
         args = args,
         cwd = vim.loop.cwd(),
-        on_stdout = function(_, data)
+        on_stdout = function(_, line)
+            table.insert(stdout, line)
             vim.schedule(function()
                 vim.fn.setqflist({}, 'a', {
                     title = string.format('%s %s', progress:render_next(), title),
-                    lines = { data },
+                    lines = { line },
                     efm = efm,
                 })
             end)
@@ -31,22 +33,25 @@ local function make(cmd, args, efm)
         on_exit = function(_, exit_code)
             vim.schedule(function()
                 vim.notify(string.format('"%s" finished with code: %d', title, exit_code))
-                vim.fn.setqflist({}, 'a', {
+                -- Dynamicly update quickfix list could mess the rendering respecting errorformat.
+                -- Therefore we keep lines and replace the quickfix list again.
+                vim.fn.setqflist({}, 'r', {
                     title = title,
-                    lines = {}
+                    lines = stdout,
+                    efm = efm,
                 })
             end)
         end,
     })
 
-    vim.fn.setqflist({}, 'f')
+    vim.fn.setqflist({}, 'f', { efm = efm })
     vim.cmd('copen')
     job:start()
 end
 
 local M = {
     build_efm = '%-ABuild%.%#,%-ZTime%.%#,%-C%.%#,%f(%l\\,%c): %trror %m [%.%#],%f(%l\\,%c): %tarning %m [%.%#],%-G%.%#',
-    test_efm = '%E%.%#Failed %m [%.%#],%-C%.%#Error Message%.%#,%-C%.%#Stack Trace%.%#,%Z%.%#in %f:line %l,%C%m,Failed!%.%# - %m - %o %.%#,Passed!%.%# - %m - %o %.%#,%-G%.%#',
+    test_efm = '%E%.%#Failed %m [%.%#],%C%.%#Error %m,%-C%.%#Stack Trace%.%#,%Z%.%#in %f:line %l,%C%m,Failed!%.%# - %m - %o %.%#,Passed!%.%# - %m - %o %.%#,%-G%.%#',
     resharper_inspect_cmd = 'jb InspectCode --absolute-paths --severity=HINT --no-build --format=Text',
     resharper_inspect_efm = ' %#%f:%l %m,%-G%.%#',
 }
@@ -100,6 +105,12 @@ function M.set_test_filter(filter)
         return 'Name~'..t
     end
 
+    if filter == nil then
+        vim.g.dotnet_test_filter = nil
+        vim.notify('Remove test filter')
+        return
+    end
+
     if #filter > 0 then
         vim.g.dotnet_test_filter = escape(filter)
         vim.notify(string.format('Set test filter to: %s', filter))
@@ -145,7 +156,7 @@ function M.set_test_filter(filter)
     ):find()
 end
 
-function M.get_filter()
+function M.get_test_filter()
     return vim.g.dotnet_test_filter
 end
 
@@ -187,8 +198,8 @@ function M.test()
 
     local args = { 'test', target }
 
-    local filter = M.get_filter()
-    if filter ~= nil then
+    local filter = M.get_test_filter() or ''
+    if #filter > 0 then
         table.insert(args, '--filter')
         table.insert(args, filter)
     end

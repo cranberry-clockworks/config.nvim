@@ -36,11 +36,12 @@ vim.api.nvim_create_user_command(
 vim.api.nvim_create_user_command(
     'DotnetTestFilter',
     function (opts)
-        dotnet.set_test_filter(opts.args)
+        dotnet.set_test_filter(not opts.bang and opts.args or nil)
     end,
     {
         nargs = '?',
-        force = true
+        force = true,
+        bang = true
     }
 )
 
