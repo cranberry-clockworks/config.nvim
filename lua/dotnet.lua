@@ -99,9 +99,8 @@ end
 function M.set_test_filter(filter)
     local function escape(test)
         local t = test
-        t = string.gsub(t, '%(', '\\(')
-        t = string.gsub(t, '%)', '\\)')
         t = string.gsub(t, '"', '\\"')
+        t = string.gsub(t, '%((.*)%)', '\\("%1"\\)')
         return 'Name~'..t
     end
 
