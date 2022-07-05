@@ -2,13 +2,21 @@
 
 function M.setup()
     local dap = require('dap')
-    vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint)
+    local o = { silent = true, noremap = true }
+    vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, o)
+    vim.keymap.set('n', '<leader>dB',
+        function ()
+            dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
+        end,
+        o
+    )
 
-    vim.keymap.set('n', '<f1>', dap.continue)
-    vim.keymap.set('n', '<f2>', dap.step_over)
-    vim.keymap.set('n', '<f3>', dap.step_into)
+    vim.keymap.set('n', '<f1>', dap.continue, o)
+    vim.keymap.set('n', '<f2>', dap.step_over, o)
+    vim.keymap.set('n', '<f3>', dap.step_into, o)
+    vim.keymap.set('n', '<f4>', dap.step_out, o)
 
-    vim.keymap.set('n', '<leader>dr', dap.repl.open)
+    vim.keymap.set('n', '<leader>dr', dap.repl.open, o)
 
     dap.adapters.coreclr = {
         type = 'executable',
