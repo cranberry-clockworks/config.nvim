@@ -7,6 +7,7 @@ This a configuration for Neovim editor.
 - `neovide` - cool GUI for the editor.
 - `ripgrep` - To grep blazingly fast.
 - `llvm` - more precisely `clang`, to compile the tree-sitter language parsers.
+- `netcoredbg` - A debugger for dotnet.
 
 # Installation
 

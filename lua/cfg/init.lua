@@ -1,6 +1,7 @@
 ﻿return {
     cmp = require('cfg.cmp'),
     comment = require('cfg.comment'),
+    dap = require('cfg.dap'),
     lsp = require('cfg.lsp'),
     luasnip = require('cfg.luasnip'),
     mappings = require('cfg.mappings'),

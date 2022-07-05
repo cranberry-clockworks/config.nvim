@@ -45,6 +45,15 @@ require('packer').startup(
             config = cfg.lsp.setup
         }
         use {
+            'mfussenegger/nvim-dap',
+            config = cfg.dap.setup,
+        }
+        use {
+            'rcarriga/nvim-dap-ui',
+            requires = { 'mfussenegger/nvim-dap' },
+            config = cfg.dap.setup_ui,
+        }
+        use {
             'L3MON4D3/LuaSnip',
             config = cfg.luasnip.setup,
         }
