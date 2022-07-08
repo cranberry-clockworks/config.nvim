@@ -88,10 +88,10 @@ vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
 -- Neovide client
-vim.opt.guifont="JetBrains Mono:h11"
-vim.g.neovide_refresh_rate=60
-vim.g.neovide_cursor_trail_size=0
-vim.g.neovide_cursor_trail_length=0
+vim.opt.guifont = 'JetBrains Mono:h10'
+vim.g.neovide_refresh_rate = 60
+vim.g.neovide_cursor_trail_size = 0
+vim.g.neovide_cursor_trail_length = 0
 
 -- Behaviours
 vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
