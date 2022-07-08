@@ -47,15 +47,20 @@ function M.setup()
         capabilities = capabilities,
         settings = {
             Lua = {
+                runtime = {
+                    version = 'LuaJIT',
+                },
                 diagnostics = {
-                    globals = { "vim" }
-                }
-            }
-        },
-        workspace = {
-            -- Make the server aware of Neovim runtime files
-            library = vim.api.nvim_get_runtime_file("", true),
-        },
+                    globals = {'vim'},
+                },
+                workspace = {
+                    library = vim.api.nvim_get_runtime_file("", true),
+                },
+                telemetry = {
+                    enable = false,
+                },
+            },
+        }
     })
 end
 
