@@ -41,18 +41,14 @@ vim.opt.shiftwidth = 4
 fun.text.set_hard_wrap(0, true)
 
 -- Appearance
+vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
 
 -- Colorscheme
-vim.opt.termguicolors = true
-require('lighthaus').setup({
-    bg_dark = false,
-    lsp_underline_style = 'underline',
-    italic_comments = true,
-    italic_keywords = false,
-})
+require("gruvbox").setup({ contrast = "soft" })
+vim.cmd("colorscheme gruvbox")
 
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'
