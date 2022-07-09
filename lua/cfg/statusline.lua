@@ -1,44 +1,37 @@
-local set_hl = function(group, options)
+﻿local set_hl = function(group, options)
   local bg = options.bg == nil and '' or 'guibg=' .. options.bg
   local fg = options.fg == nil and '' or 'guifg=' .. options.fg
   local gui = options.gui == nil and '' or 'gui=' .. options.gui
 
   vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
 end
-
 set_hl('StatusLineLspInfo', { fg = "#010101", bg = "#010101"})
-
-local function get_git_branch()
-    local branch = vim.fn['FugitiveHead']()
-    if not branch or branch == "" then
-        branch = "--"
-    end
-    return string.format('[%s]', branch)
-end
-
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
         return string.format(
-            '[%d/%d]',
+            '%d/%d',
             #vim.diagnostic.get(0),
             #vim.diagnostic.get())
     else
-        return '[*]'
+        return ''
     end
 end
 
 local function get_file_info()
     local filetype = vim.bo.filetype
     if #filetype > 0 then
-        filetype = '[' .. filetype .. ']'
+        filetype = filetype .. ' '
     end
 
     local encoding = vim.bo.fileencoding
-    if vim.bo.bomb then
-        encoding = encoding .. " bom"
+    if #encoding > 0 and vim.bo.bomb then
+        encoding = encoding .. "-bom"
+    end
+    if #encoding > 0 then
+        encoding = encoding .. ' '
     end
 
-    return string.format('%s[%s][%s]',
+    return string.format('%s%s%s',
         filetype,
         encoding,
         vim.bo.fileformat
@@ -66,7 +59,6 @@ function RenderStatusLine()
         color_as(get_lsp_info(), 'StatusLineNC'),
         color_as(get_flags(), 'StatusLine'),
         color_as(get_file_name(), 'StatusLine'),
-        -- color_as(get_git_branch(), 'StatusLineNC'),
         color_as(get_file_info(), 'StatusLineNC')
     )
 
