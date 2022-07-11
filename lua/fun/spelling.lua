@@ -12,7 +12,4 @@ function M.toggle_spellcheck()
     print('Enable spellcheck')
 end
 
-local options = { noremap = true }
-vim.keymap.set('n', '<leader>ee', function() M.toggle_spellcheck() end, options)
-
 return M
