@@ -9,7 +9,6 @@ local packer = require('packer')
 packer.startup(
     function(use)
         use({'wbthomason/packer.nvim'})
-        use({'mrjones2014/lighthaus.nvim'})
         use({'ellisonleao/gruvbox.nvim'})
         use({'tpope/vim-fugitive'})
         use({'tpope/vim-surround'})
