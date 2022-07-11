@@ -46,6 +46,15 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
 
+-- Show invisibles
+vim.opt.list = true
+vim.opt.listchars = {
+    tab = '▷ ',
+    trail = '·',
+    precedes = '«',
+    extends = '»',
+}
+
 -- Colorscheme
 require("gruvbox").setup({ contrast = "soft" })
 vim.cmd("colorscheme gruvbox")
