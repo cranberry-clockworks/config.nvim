@@ -1,1 +1,5 @@
-require('cfg')
+require('cfg.dependencies').setup()
+require('cfg.keymaps').setup()
+require('cfg.options').setup()
+require('cfg.statusline').setup()
+require('cfg.plugins').setup()

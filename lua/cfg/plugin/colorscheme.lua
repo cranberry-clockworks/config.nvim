@@ -1,5 +1,5 @@
 ﻿return {
     setup = function()
-        require('Comment').setup()
+        require('lighthaus').setup()
     end
 }

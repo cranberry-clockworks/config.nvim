@@ -1,11 +1,11 @@
 ﻿local set_hl = function(group, options)
-  local bg = options.bg == nil and '' or 'guibg=' .. options.bg
-  local fg = options.fg == nil and '' or 'guifg=' .. options.fg
-  local gui = options.gui == nil and '' or 'gui=' .. options.gui
+    local bg = options.bg == nil and '' or 'guibg=' .. options.bg
+    local fg = options.fg == nil and '' or 'guifg=' .. options.fg
+    local gui = options.gui == nil and '' or 'gui=' .. options.gui
 
-  vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
+    vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
 end
-set_hl('StatusLineLspInfo', { fg = "#010101", bg = "#010101"})
+set_hl('StatusLineLspInfo', { fg = "#010101", bg = "#010101" })
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
         return string.format(
@@ -31,7 +31,8 @@ local function get_file_info()
         encoding = encoding .. ' '
     end
 
-    return string.format('%s%s%s',
+    return string.format(
+        '%s%s%s',
         filetype,
         encoding,
         vim.bo.fileformat
@@ -50,7 +51,6 @@ local function color_as(value, group)
     return string.format('%%#%s#%s', group, value)
 end
 
--- local status_line_template = '%s%s%%=%s%%=%s%s'
 local status_line_template = '%s%s%%=%s%%=%s'
 
 function RenderStatusLine()
@@ -61,7 +61,10 @@ function RenderStatusLine()
         color_as(get_file_name(), 'StatusLine'),
         color_as(get_file_info(), 'StatusLineNC')
     )
-
 end
 
-vim.o.statusline = '%!v:lua.RenderStatusLine()'
+return {
+    setup = function()
+        vim.o.statusline = '%!v:lua.RenderStatusLine()'
+    end
+}
