@@ -9,9 +9,12 @@ set_hl('StatusLineLspInfo', { fg = "#010101", bg = "#010101" })
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
         return string.format(
-            '%d/%d',
-            #vim.diagnostic.get(0),
-            #vim.diagnostic.get())
+            '%d:%d:%d:%d',
+            #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }),
+            #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN }),
+            #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO }),
+            #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+        )
     else
         return ''
     end
