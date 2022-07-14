@@ -18,7 +18,7 @@ function M.setup()
         function(use)
             use({ 'wbthomason/packer.nvim' })
             use({
-                'mrjones2014/lighthaus.nvim',
+                'lighthaus-theme/vim-lighthaus',
                 config = config('colorscheme')
             })
             use({ 'tpope/vim-fugitive' })
@@ -31,9 +31,6 @@ function M.setup()
                     'nvim-lua/plenary.nvim',
                     'cranberry-knight/telescope-compiler.nvim',
                 },
-                wants = {
-                    'telescope-compiler.nvim',
-                },
                 config = config('telescope'),
             })
             use({
@@ -45,11 +42,6 @@ function M.setup()
                 'neovim/nvim-lspconfig',
                 requires = {
                     'williamboman/nvim-lsp-installer',
-                },
-                wants = {
-                    'nvim-lsp-installer',
-                    'cmp-nvim-lsp',
-                    'telescope.nvim',
                 },
                 config = config('lsp'),
             })
@@ -64,9 +56,6 @@ function M.setup()
                     requires = {
                         'mfussenegger/nvim-dap',
                     },
-                },
-                wants = {
-                    'nvim-dap-ui',
                 },
                 config = config('dap'),
             })
@@ -83,10 +72,6 @@ function M.setup()
                     'hrsh7th/cmp-path',
                     'hrsh7th/cmp-cmdline',
                     'hrsh7th/cmp-nvim-lsp-signature-help',
-                },
-                wants = {
-                    'nvim-lspconfig',
-                    'LuaSnip',
                 },
                 config = config('cmp'),
             })

@@ -1,5 +1,5 @@
 ﻿return {
     setup = function()
-        require('lighthaus').setup()
+        vim.cmd('colorscheme lighthaus')
     end
 }
