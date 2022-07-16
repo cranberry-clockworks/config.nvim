@@ -47,7 +47,7 @@ function M.setup()
             })
             use({
                 'jose-elias-alvarez/null-ls.nvim',
-                config = config('nullls'),
+                config = config('null_ls'),
             })
             use({
                 'mfussenegger/nvim-dap',
