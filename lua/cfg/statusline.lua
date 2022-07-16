@@ -1,11 +1,11 @@
-﻿local set_hl = function(group, options)
+local set_hl = function(group, options)
     local bg = options.bg == nil and '' or 'guibg=' .. options.bg
     local fg = options.fg == nil and '' or 'guifg=' .. options.fg
     local gui = options.gui == nil and '' or 'gui=' .. options.gui
 
     vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
 end
-set_hl('StatusLineLspInfo', { fg = "#010101", bg = "#010101" })
+set_hl('StatusLineLspInfo', { fg = '#010101', bg = '#010101' })
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
         return string.format(
@@ -28,18 +28,13 @@ local function get_file_info()
 
     local encoding = vim.bo.fileencoding
     if #encoding > 0 and vim.bo.bomb then
-        encoding = encoding .. "-bom"
+        encoding = encoding .. '-bom'
     end
     if #encoding > 0 then
         encoding = encoding .. ' '
     end
 
-    return string.format(
-        '%s%s%s',
-        filetype,
-        encoding,
-        vim.bo.fileformat
-    )
+    return string.format('%s%s%s', filetype, encoding, vim.bo.fileformat)
 end
 
 local function get_flags()
@@ -69,5 +64,5 @@ end
 return {
     setup = function()
         vim.o.statusline = '%!v:lua.RenderStatusLine()'
-    end
+    end,
 }

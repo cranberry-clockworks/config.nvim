@@ -1,4 +1,4 @@
-﻿local function split_on_command_and_args(makeprg)
+local function split_on_command_and_args(makeprg)
     local cmd = makeprg
     local args = {}
 
@@ -43,7 +43,9 @@ function M.make_async(opts)
         end,
         on_exit = function(_, exit_code)
             vim.schedule(function()
-                vim.notify(string.format('Make job finished with code: %d', exit_code))
+                vim.notify(
+                    string.format('Make job finished with code: %d', exit_code)
+                )
             end)
         end,
     })
@@ -59,24 +61,16 @@ function M.make_term(opts)
     vim.cmd(string.format('term %s', cmd))
 end
 
-vim.api.nvim_create_user_command(
-    'Make',
-    M.make_async,
-    {
-        desc = 'Execute :make async',
-        nargs = "*",
-        force = true,
-        complete = 'file',
-    }
-)
+vim.api.nvim_create_user_command('Make', M.make_async, {
+    desc = 'Execute :make async',
+    nargs = '*',
+    force = true,
+    complete = 'file',
+})
 
-vim.api.nvim_create_user_command(
-    'MakeT',
-    M.make_term,
-    {
-        desc = 'Execute :make sync',
-        nargs = "*",
-        force = true,
-        complete = 'file',
-    }
-)
+vim.api.nvim_create_user_command('MakeT', M.make_term, {
+    desc = 'Execute :make sync',
+    nargs = '*',
+    force = true,
+    complete = 'file',
+})
