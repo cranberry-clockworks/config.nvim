@@ -1,11 +1,3 @@
-local set_hl = function(group, options)
-    local bg = options.bg == nil and '' or 'guibg=' .. options.bg
-    local fg = options.fg == nil and '' or 'guifg=' .. options.fg
-    local gui = options.gui == nil and '' or 'gui=' .. options.gui
-
-    vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
-end
-set_hl('StatusLineLspInfo', { fg = '#010101', bg = '#010101' })
 local function get_lsp_info()
     if vim.lsp.buf.server_ready() then
         return string.format(
@@ -45,19 +37,15 @@ local function get_file_name()
     return '%<%f'
 end
 
-local function color_as(value, group)
-    return string.format('%%#%s#%s', group, value)
-end
-
 local status_line_template = '%s%s%%=%s%%=%s'
 
 function RenderStatusLine()
     return string.format(
         status_line_template,
-        color_as(get_lsp_info(), 'StatusLineNC'),
-        color_as(get_flags(), 'StatusLine'),
-        color_as(get_file_name(), 'StatusLine'),
-        color_as(get_file_info(), 'StatusLineNC')
+        get_lsp_info(),
+        get_flags(),
+        get_file_name(),
+        get_file_info()
     )
 end
 
