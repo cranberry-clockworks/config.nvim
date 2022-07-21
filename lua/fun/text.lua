@@ -9,7 +9,7 @@ function M.set_hard_wrap(width, quiet)
     quiet = quiet or false
 
     local w = width or vim.call('input', 'Enter new text width: ')
-    vim.cmd('set nowrap!')
+    vim.opt.wrap = false
     set_text_width(w)
 
     if quiet == false then
