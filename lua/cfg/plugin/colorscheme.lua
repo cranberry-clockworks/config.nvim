@@ -241,6 +241,9 @@ function M.setup()
         TelescopeSelectionCaret = { bg = palette.background.brightest },
         TelescopeSelection = { bg = palette.background.brightest },
         TelescopeMatching = groups.brightest_bold,
+
+        -- Netrw
+        netrwMarkFile = { bg = palette.background.brightest },
     }
 
     for group, set in pairs(groups) do
