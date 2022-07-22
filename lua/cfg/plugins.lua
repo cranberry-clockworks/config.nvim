@@ -23,13 +23,16 @@ function M.setup()
     packer.startup(function(use)
         use({ 'wbthomason/packer.nvim' })
         use({ 'kdheepak/monochrome.nvim' })
-        use({ 
+        use({
             'lighthaus-theme/vim-lighthaus',
-            config = config('colorscheme') 
+            config = config('colorscheme')
         })
         use({ 'tpope/vim-fugitive' })
         use({ 'tpope/vim-surround' })
-        use({ 'numToStr/Comment.nvim' })
+        use({
+            'numToStr/Comment.nvim',
+            config = config('comment')
+        })
         use({
             'nvim-telescope/telescope.nvim',
             requires = {
