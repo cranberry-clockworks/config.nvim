@@ -15,6 +15,18 @@ vim.api.nvim_create_user_command(
     }
 )
 
+vim.api.nvim_create_user_command(
+    'DotnetConfiguration',
+    function(opts)
+        dotnet.set_configuration(opts.args)
+    end,
+    {
+        nargs = '?',
+        complete = 'file',
+        force = true,
+    }
+)
+
 vim.api.nvim_create_user_command('DotnetBuild', dotnet.build, { nargs = 0, force = true, })
 vim.api.nvim_create_user_command('DotnetClean', dotnet.clean, { nargs = 0, force = true, })
 vim.api.nvim_create_user_command('DotnetRun', dotnet.run, { nargs = 0, force = true, })
