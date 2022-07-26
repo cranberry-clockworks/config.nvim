@@ -50,7 +50,12 @@ function M.setup()
         use({
             'neovim/nvim-lspconfig',
             requires = {
-                'williamboman/nvim-lsp-installer',
+                "williamboman/mason.nvim",
+                "williamboman/mason-lspconfig.nvim",
+                {
+                    'WhoIsSethDaniel/mason-tool-installer.nvim',
+                    config = config('mason')
+                }
             },
             config = config('lsp'),
         })
