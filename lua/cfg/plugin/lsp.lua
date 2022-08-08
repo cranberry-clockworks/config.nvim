@@ -68,6 +68,11 @@ function M.setup()
             },
         },
     })
+
+    configuration.pylsp.setup({
+        on_attach = M.map_keys,
+        capabilities = capabilities,
+    })
 end
 
 return M
