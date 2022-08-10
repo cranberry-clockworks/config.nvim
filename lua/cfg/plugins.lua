@@ -39,6 +39,7 @@ function M.setup()
                 'nvim-lua/popup.nvim',
                 'nvim-lua/plenary.nvim',
                 'cranberry-knight/telescope-compiler.nvim',
+                'nvim-telescope/telescope-file-browser.nvim',
             },
             config = config('telescope'),
         })

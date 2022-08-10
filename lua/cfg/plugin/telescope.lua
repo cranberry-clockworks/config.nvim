@@ -44,21 +44,29 @@ function M.setup()
             git_status = {
                 previewer = false,
             },
+        },
+        extensions = {
+            file_browser = {
+                dir_icon = '■',
+            }
         }
     })
 
     telescope.load_extension('compiler')
+    telescope.load_extension('file_browser')
 
     local options = require('cfg.keymaps').options
 
     vim.keymap.set('n', '<leader>ff', builtin.find_files, options)
-    vim.keymap.set('n', '<leader>ft', builtin.filetypes, options)
-    vim.keymap.set('n', '<leader>fc', '<cmd>Telescope compiler<cr>', options)
+    vim.keymap.set('n', '<leader>ct', builtin.filetypes, options)
+    vim.keymap.set('n', '<leader>cc', '<cmd>Telescope compiler<cr>', options)
     vim.keymap.set('n', '<leader>fg', builtin.live_grep, options)
     vim.keymap.set('n', '<leader>fb', builtin.buffers, options)
     vim.keymap.set('n', '<leader>gb', builtin.git_branches, options)
     vim.keymap.set('n', '<leader>gs', builtin.git_status, options)
-    vim.keymap.set('n', '<leader>fz', builtin.spell_suggest, options)
+    vim.keymap.set('n', '<leader>cz', builtin.spell_suggest, options)
+    vim.keymap.set('n', '<leader>fe', '<cmd>Telescope file_browser path=%:p:h<cr>', options)
+    vim.keymap.set('n', '<leader>fc', '<cmd>Telescope file_browser<cr>', options)
 end
 
 return M
