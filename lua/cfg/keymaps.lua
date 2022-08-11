@@ -12,12 +12,20 @@ M.setup = function()
     vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, M.options)
 
     -- Quick lists
-    vim.keymap.set('n', '<c-down>', '<cmd>cnext<cr>', M.options)
-    vim.keymap.set('n', '<c-up>', '<cmd>cprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>c<down>', '<cmd>cnext<cr>', M.options)
+    vim.keymap.set('n', '<leader>cj', '<cmd>cnext<cr>', M.options)
+    vim.keymap.set('n', '<leader>c<up>', '<cmd>cprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>ck', '<cmd>cprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>co', '<cmd>copen<cr>', M.options)
+    vim.keymap.set('n', '<leader>cc', '<cmd>cclose<cr>', M.options)
 
     -- Local lists
-    vim.keymap.set('n', '<M-down>', '<cmd>lnext<cr>', M.options)
-    vim.keymap.set('n', '<M-up>', '<cmd>lprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>l<down>', '<cmd>lnext<cr>', M.options)
+    vim.keymap.set('n', '<leader>lj', '<cmd>lnext<cr>', M.options)
+    vim.keymap.set('n', '<leader>l<up>', '<cmd>lprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>lk', '<cmd>lprev<cr>', M.options)
+    vim.keymap.set('n', '<leader>lo', '<cmd>lopen<cr>', M.options)
+    vim.keymap.set('n', '<leader>lc', '<cmd>lclose<cr>', M.options)
 
     -- Diff
     vim.keymap.set('n', '<leader>cw', '<cmd>Gwrite<cr>', M.options)
