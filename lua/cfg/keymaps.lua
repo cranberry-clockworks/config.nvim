@@ -31,13 +31,13 @@ M.setup = function()
     vim.keymap.set('n', '<leader>cw', '<cmd>Gwrite<cr>', M.options)
     vim.keymap.set(
         'n',
-        '<leader>cl',
+        '<leader>sl',
         '<cmd>diffget //2 | diffupdate<cr>',
         M.options
     )
     vim.keymap.set(
         'n',
-        '<leader>cr',
+        '<leader>sr',
         '<cmd>diffget //3 | diffupdate<cr>',
         M.options
     )
