@@ -25,13 +25,13 @@ function M.setup()
         use({ 'kdheepak/monochrome.nvim' })
         use({
             'lighthaus-theme/vim-lighthaus',
-            config = config('colorscheme')
+            config = config('colorscheme'),
         })
         use({ 'tpope/vim-fugitive' })
         use({ 'tpope/vim-surround' })
         use({
             'numToStr/Comment.nvim',
-            config = config('comment')
+            config = config('comment'),
         })
         use({
             'nvim-telescope/telescope.nvim',
@@ -51,12 +51,12 @@ function M.setup()
         use({
             'neovim/nvim-lspconfig',
             requires = {
-                "williamboman/mason.nvim",
-                "williamboman/mason-lspconfig.nvim",
+                'williamboman/mason.nvim',
+                'williamboman/mason-lspconfig.nvim',
                 {
                     'WhoIsSethDaniel/mason-tool-installer.nvim',
-                    config = config('mason')
-                }
+                    config = config('mason'),
+                },
             },
             config = config('lsp'),
         })
@@ -89,6 +89,11 @@ function M.setup()
                 'hrsh7th/cmp-nvim-lsp-signature-help',
             },
             config = config('cmp'),
+        })
+        use({
+            'danymat/neogen',
+            requires = { 'nvim-treesitter/nvim-treesitter' },
+            config = config('neogen'),
         })
 
         if bootstrap then
