@@ -73,6 +73,11 @@ function M.setup()
         on_attach = M.map_keys,
         capabilities = capabilities,
     })
+
+    configuration.tsserver.setup({
+        on_attach = M.map_keys,
+        capabilities = capabilities
+    })
 end
 
 return M
