@@ -22,10 +22,11 @@ function M.setup()
     packer.init({ transitive_opt = false })
     packer.startup(function(use)
         use({ 'wbthomason/packer.nvim' })
-        use({ 'kdheepak/monochrome.nvim' })
         use({
-            'lighthaus-theme/vim-lighthaus',
-            config = config('colorscheme'),
+            'rebelot/kanagawa.nvim',
+            config = function ()
+                vim.cmd('colorscheme kanagawa')
+            end,
         })
         use({ 'tpope/vim-fugitive' })
         use({ 'tpope/vim-surround' })
