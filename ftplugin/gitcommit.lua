@@ -1,4 +1,4 @@
-﻿local fun = require('fun')
-
+﻿local width = 72
 vim.wo.spell = true
-fun.text.set_hard_wrap(72, true)
+vim.opt.textwidth = tonumber(width)
+vim.opt.colorcolumn = tostring(width)
