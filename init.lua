@@ -115,7 +115,6 @@ require('packer').startup(function(use)
         },
         config = function()
             local lsp = require('lsp-zero')
-            -- lsp.preset('recommended')
             lsp.set_preferences({
                 suggest_lsp_servers = true,
                 setup_servers_on_start = true,
@@ -151,11 +150,11 @@ require('packer').startup(function(use)
                 },
             })
 
-            local nls = require('null-ls')
-            nls.setup({
+            local null_ls = require('null-ls')
+            null_ls.setup({
                 on_attach = lsp.build_options('null-ls').on_attach,
                 sources = {
-                    nls.builtins.diagnostics.vale.with({
+                    null_ls.builtins.diagnostics.vale.with({
                         extra_args = {
                             '--config',
                             vim.fn.expand(
@@ -164,8 +163,9 @@ require('packer').startup(function(use)
                         },
                         extra_filetypes = { 'gitcommit' },
                     }),
-                    nls.builtins.formatting.stylua,
-                    nls.builtins.formatting.prettier,
+                    null_ls.builtins.formatting.stylua,
+                    null_ls.builtins.formatting.csharpier,
+                    null_ls.builtins.formatting.prettier,
                 },
             })
 
