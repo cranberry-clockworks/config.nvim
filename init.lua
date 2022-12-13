@@ -108,6 +108,9 @@ require('packer').startup(function(use)
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
 
+            -- Signature
+            { 'ray-x/lsp_signature.nvim' },
+
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
@@ -130,6 +133,14 @@ require('packer').startup(function(use)
                     info = 'I',
                 },
             })
+
+            lsp.on_attach(function(_, buffer)
+                require('lsp_signature').on_attach({
+                    hint_prefix = '▷ ',
+                    select_signature_key = '<c-q>',
+                },
+                    buffer)
+            end)
 
             lsp.configure('sumneko_lua', {
                 settings = {
