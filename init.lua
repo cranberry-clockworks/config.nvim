@@ -363,6 +363,11 @@ map(
     vim.diagnostic.setloclist,
     'Put [l]sp diagnostics to [l]ocation list'
 )
+map('<leader>l<del>', function()
+    vim.cmd('LspStop')
+    vim.diagnostic.reset()
+    vim.notify('Detached LSP servers')
+end, '[de]tach [l]sp server')
 
 -- Quickfix list
 map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
