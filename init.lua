@@ -138,8 +138,7 @@ require('packer').startup(function(use)
                 require('lsp_signature').on_attach({
                     hint_prefix = '▷ ',
                     select_signature_key = '<c-q>',
-                },
-                    buffer)
+                }, buffer)
             end)
 
             lsp.configure('sumneko_lua', {
@@ -236,6 +235,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.wrap = false
 vim.opt.title = true
+vim.opt.scrolloff = 8
 vim.g.syntax_on = true
 vim.cmd('filetype plugin indent on')
 
@@ -282,15 +282,20 @@ vim.g.netrw_list_hide = '^\\./$'
 -- Keymaps
 vim.g.mapleader = ' '
 
+local function map(key, action, description)
+    vim.keymap.set('n', key, action, { desc = description })
+end
+
 -- Reload configuration
-vim.keymap.set('n', '<F12>', function()
+map('<F12>', function()
     dofile(vim.env.MYVIMRC)
     require('packer').sync()
-end)
+end, 'Load configuration again')
 
 -- Generic
-vim.keymap.set('n', '<leader>n', '<cmd>nohlsearch<cr>')
-vim.keymap.set('n', '<leader>tsc', function()
+map('<leader>n', '<cmd>nohlsearch<cr>', '[n]o highlight search')
+
+map('<leader>tsc', function()
     if vim.wo.spell then
         vim.wo.spell = false
         vim.notify('Disable spellcheck')
@@ -300,55 +305,94 @@ vim.keymap.set('n', '<leader>tsc', function()
     vim.wo.spell = true
     vim.bo.spelllang = 'en,ru'
     vim.notify('Enable spellcheck')
-end)
-vim.keymap.set('n', '<leader>thw', function()
+end, '[t]oggle [s]pell [c]heck')
+
+map('<leader>thw', function()
     local width = vim.call('input', 'Enter new hard wrap text width: ')
     vim.opt.wrap = false
     vim.opt.textwidth = tonumber(width)
     vim.opt.colorcolumn = tostring(width)
-end)
-vim.keymap.set('n', '<leader>tsw', function()
+end, '[t]oggle [h]ard [w]rap')
+
+map('<leader>tsw', function()
     vim.opt.textwidth = tonumber(0)
     vim.opt.colorcolumn = tostring(0)
     vim.cmd('set wrap!')
     vim.notify('Enable text soft wrap')
-end)
+end, '[t]oggle [s]oft [w]rap')
 
 -- Telescope
-vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
-vim.keymap.set('n', '<leader>fe', '<cmd>Telescope file_browser path=%:p:h<cr>')
-vim.keymap.set('n', '<leader>fc', '<cmd>Telescope file_browser<cr>')
-vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>')
-vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
-vim.keymap.set('n', '<leader>sf', '<cmd>Telescope filetypes<cr>')
-vim.keymap.set('n', '<leader>sc', '<cmd>Telescope compiler<cr>')
-vim.keymap.set('n', '<leader>ss', '<cmd>Telescope spell_suggest<cr>')
-vim.keymap.set('n', '<leader>gb', '<cmd>Telescope git_branches<cr>')
-vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<cr>')
-vim.keymap.set(
-    'n',
+
+map('<leader>ff', require('telescope.builtin').find_files, '[f]ind [f]iles')
+map('<leader>fe', function()
+    require('telescope').extensions.file_browser.file_browser({
+        path = '%:p:h<cr>',
+    })
+end, 'Browse [F]iles [E]xplore around current one')
+map(
+    '<leader>fc',
+    require('telescope').extensions.file_browser.file_browser,
+    'Browse [f]iles in [c]urrent working directory'
+)
+map('<leader>fb', require('telescope.builtin').buffers, '[f]ind [b]uffer')
+map('<leader>fg', require('telescope.builtin').live_grep, '[f]ind with [g]rep')
+map('<leader>sf', require('telescope.builtin').filetypes, '[s]elect [f]iletype')
+map(
+    '<leader>sc',
+    require('telescope').extensions.compiler.compiler,
+    '[s]elect [c]ompiler'
+)
+map(
+    '<leader>ss',
+    require('telescope.builtin').spell_suggest,
+    '[s]pell [s]uggests'
+)
+map('<leader>gb', require('telescope.builtin').git_branches, '[g]it [b]ranches')
+map('<leader>gs', require('telescope.builtin').git_status, '[g]it [s]tatus')
+map(
     '<leader>ws',
-    '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>'
+    require('telescope.builtin').lsp_dynamic_workspace_symbols,
+    'Browse [w]orkspace [s]ymbols'
 )
 
 -- LSP
-vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename)
-vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
-vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist)
+map('<leader>lr', vim.lsp.buf.rename, '[l]SP [r]ename')
+map('<leader>lf', vim.lsp.buf.format, '[l]SP [f]ormat')
+map(
+    '<leader>ll',
+    vim.diagnostic.setloclist,
+    'Put [l]sp diagnostics to [l]ocation list'
+)
 
 -- Quickfix list
-vim.keymap.set('n', '<leader>cn', '<cmd>cnext<cr>')
-vim.keymap.set('n', '<leader>cp', '<cmd>cprev<cr>')
-vim.keymap.set('n', '<leader>co', '<cmd>copen<cr>')
-vim.keymap.set('n', '<leader>cc', '<cmd>cclose<cr>')
+map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
+map(
+    '<leader>cp',
+    '<cmd>cprev<cr>',
+    'Select [p]revious item in the quickfix list'
+)
+map('<leader>co', '<cmd>copen<cr>', '[o]pen the quickfix list')
+map('<leader>cc', '<cmd>cclose<cr>', '[c]lose the quickfix list')
 
 -- Location list
-vim.keymap.set('n', '<leader>ln', '<cmd>lnext<cr>')
-vim.keymap.set('n', '<leader>lp', '<cmd>lprev<cr>')
-vim.keymap.set('n', '<leader>lo', '<cmd>lopen<cr>')
-vim.keymap.set('n', '<leader>lc', '<cmd>lclose<cr>')
+map('<leader>ln', '<cmd>lnext<cr>', 'Select [n]ext item in the [l]ocal list')
+map(
+    '<leader>lp',
+    '<cmd>lprev<cr>',
+    'Select [p]revious item in the [l]ocal list'
+)
+map('<leader>lo', '<cmd>lopen<cr>', '[o]pen the [l]ocal list')
+map('<leader>lc', '<cmd>lclose<cr>', '[c]lose the [l]ocal list')
 
 -- Diff
-vim.keymap.set('n', '<leader>dw', '<cmd>Gwrite<cr>')
-vim.keymap.set('n', '<leader>dl', '<cmd>diffget //2 | diffupdate<cr>')
-vim.keymap.set('n', '<leader>dr', '<cmd>diffget //3 | diffupdate<cr>')
+map('<leader>dw', '<cmd>Gwrite<cr>', '[d]iff [w]rite')
+map(
+    '<leader>dl',
+    '<cmd>diffget //2 | diffupdate<cr>',
+    'Select for [d]iff from [l]eft column'
+)
+map(
+    '<leader>dr',
+    '<cmd>diffget //3 | diffupdate<cr>',
+    'Select for [d]iff from [r]ight column'
+)
