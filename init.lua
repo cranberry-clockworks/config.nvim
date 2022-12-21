@@ -205,7 +205,7 @@ require('packer').startup(function(use)
                 ui.close({})
             end
 
-            dap.adapters.coreclr = {
+            dap.adapters.netcoredbg = {
                 type = 'executable',
                 command = vim.fn.stdpath('data')
                     .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg',
@@ -214,7 +214,7 @@ require('packer').startup(function(use)
 
             dap.configurations.cs = {
                 {
-                    type = 'coreclr',
+                    type = 'netcoredbg',
                     name = 'launch - netcoredbg',
                     request = 'launch',
                     cwd = '${workspaceFolder}',
@@ -227,6 +227,73 @@ require('packer').startup(function(use)
                     end,
                 },
             }
+        end,
+    })
+    use({
+        'nvim-neotest/neotest',
+        requires = {
+            'nvim-lua/plenary.nvim',
+            'nvim-treesitter/nvim-treesitter',
+            'antoinemadec/FixCursorHold.nvim',
+            'Issafalcon/neotest-dotnet',
+        },
+        config = function()
+            require('neotest').setup({
+                icons = {
+                    child_indent = '│',
+                    child_prefix = '├',
+                    collapsed = '─',
+                    expanded = '╮',
+                    failed = '♦',
+                    final_child_indent = ' ',
+                    final_child_prefix = '╰',
+                    non_collapsible = '─',
+                    passed = '♦',
+                    running = '♦',
+                    running_animated = {
+                        '⠁',
+                        '⠂',
+                        '⠄',
+                        '⡀',
+                        '⡈',
+                        '⡐',
+                        '⡠',
+                        '⣀',
+                        '⣁',
+                        '⣂',
+                        '⣄',
+                        '⣌',
+                        '⣔',
+                        '⣤',
+                        '⣥',
+                        '⣦',
+                        '⣮',
+                        '⣶',
+                        '⣷',
+                        '⣿',
+                        '⡿',
+                        '⠿',
+                        '⢟',
+                        '⠟',
+                        '⡛',
+                        '⠛',
+                        '⠫',
+                        '⢋',
+                        '⠋',
+                        '⠍',
+                        '⡉',
+                        '⠉',
+                        '⠑',
+                        '⠡',
+                        '⢁',
+                    },
+                    skipped = '♦',
+                    unknown = '♦',
+                },
+                adapters = {
+                    require('neotest-dotnet'),
+                },
+            })
         end,
     })
     use({
@@ -435,6 +502,23 @@ map('<S-F11>', require('dap').step_out, 'Debug step out')
 
 map('<leader>do', require('dap').repl.open, 'Debug [o]pen repl')
 map('<leader>du', require('dapui').toggle, 'Debug toggle [u]i')
+
+-- Neotest
+map('<leader>tu', function()
+    local nt = require('neotest')
+    nt.summary.toggle()
+    nt.output_panel.toggle()
+end, '[t]oggle [t]est view')
+map('<leader>tr', function()
+    local nt = require('neotest')
+    nt.output_panel.open()
+    nt.run.run()
+end, '[t]est [r]un current method')
+map('<leader>td', function()
+    local nt = require('neotest')
+    nt.output_panel.close()
+    nt.run.run({ strategy = 'dap' })
+end, '[t]est [d]ebug current method')
 
 -- Quickfix list
 map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
