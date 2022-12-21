@@ -177,6 +177,47 @@ require('packer').startup(function(use)
         end,
     })
     use({
+        'rcarriga/nvim-dap-ui',
+        requires = {
+            'mfussenegger/nvim-dap',
+        },
+        config = function()
+            local dap = require('dap')
+            local ui = require('dapui')
+            ui.setup()
+            dap.listeners.after.event_initialized['dapui_config'] = function()
+                ui.open({})
+            end
+            dap.listeners.before.event_terminated['dapui_config'] = function()
+                ui.close({})
+            end
+            dap.listeners.before.event_exited['dapui_config'] = function()
+                ui.close({})
+            end
+
+            dap.adapters.coreclr = {
+                type = 'executable',
+                command = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg',
+                args = { '--interpreter=vscode' }
+            }
+
+            dap.configurations.cs = {
+                {
+                    type = 'coreclr',
+                    name = 'launch - netcoredbg',
+                    request = 'launch',
+                    program = function()
+                        return vim.fn.input(
+                            'Path to dll: ',
+                            vim.fn.getcwd(),
+                            'file'
+                        )
+                    end,
+                },
+            }
+        end,
+    })
+    use({
         'numToStr/Comment.nvim',
         config = function()
             require('Comment').setup()
@@ -362,6 +403,24 @@ map('<leader>l<del>', function()
     vim.diagnostic.reset()
     vim.notify('Detached LSP servers')
 end, '[de]tach [l]sp server')
+
+-- DAP
+map(
+    '<leader>db',
+    require('dap').toggle_breakpoint,
+    'Toggle [d]ebug [b]reakpoint'
+)
+map('<leader>dc', function()
+    require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))
+end, 'Toggle [d]ebug breakpoint wiht [c]ondition')
+
+map('<F5>', require('dap').continue, 'Debug continue')
+map('<F10>', require('dap').step_over, 'Debug step over')
+map('<F11>', require('dap').step_into, 'Debug step into')
+map('<S-F11>', require('dap').step_out, 'Debug step out')
+
+map('<leader>do', require('dap').repl.open, 'Debug [o]pen repl')
+map('<leader>du', require('dapui').toggle, 'Debug toggle [u]i')
 
 -- Quickfix list
 map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
