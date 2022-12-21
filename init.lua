@@ -109,7 +109,7 @@ require('packer').startup(function(use)
             { 'hrsh7th/cmp-nvim-lua' },
 
             -- Signature
-            { 'ray-x/lsp_signature.nvim' },
+            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
 
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
@@ -118,14 +118,8 @@ require('packer').startup(function(use)
         },
         config = function()
             local lsp = require('lsp-zero')
+            lsp.preset('recommended')
             lsp.set_preferences({
-                suggest_lsp_servers = true,
-                setup_servers_on_start = true,
-                set_lsp_keymaps = true,
-                configure_diagnostics = true,
-                cmp_capabilities = true,
-                manage_nvim_cmp = true,
-                call_servers = 'local',
                 sign_icons = {
                     error = 'E',
                     warn = 'W',
@@ -134,12 +128,12 @@ require('packer').startup(function(use)
                 },
             })
 
-            lsp.on_attach(function(_, buffer)
-                require('lsp_signature').on_attach({
-                    hint_prefix = '▷ ',
-                    select_signature_key = '<c-q>',
-                }, buffer)
-            end)
+            local sources = lsp.defaults.cmp_sources()
+            table.insert(sources, { name = 'nvim_lsp_signature_help' })
+
+            lsp.setup_nvim_cmp({
+                sources = sources,
+            })
 
             lsp.configure('sumneko_lua', {
                 settings = {
