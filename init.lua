@@ -184,7 +184,17 @@ require('packer').startup(function(use)
         config = function()
             local dap = require('dap')
             local ui = require('dapui')
-            ui.setup()
+            ui.setup({
+                icons = {
+                    expanded = '▾',
+                    collapsed = '▸',
+                    current_frame = '→',
+                },
+                controls = {
+                    enabled = false,
+                },
+            })
+
             dap.listeners.after.event_initialized['dapui_config'] = function()
                 ui.open({})
             end
@@ -197,8 +207,9 @@ require('packer').startup(function(use)
 
             dap.adapters.coreclr = {
                 type = 'executable',
-                command = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg',
-                args = { '--interpreter=vscode' }
+                command = vim.fn.stdpath('data')
+                    .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg',
+                args = { '--interpreter=vscode' },
             }
 
             dap.configurations.cs = {
@@ -206,6 +217,7 @@ require('packer').startup(function(use)
                     type = 'coreclr',
                     name = 'launch - netcoredbg',
                     request = 'launch',
+                    cwd = '${workspaceFolder}',
                     program = function()
                         return vim.fn.input(
                             'Path to dll: ',
@@ -415,6 +427,8 @@ map('<leader>dc', function()
 end, 'Toggle [d]ebug breakpoint wiht [c]ondition')
 
 map('<F5>', require('dap').continue, 'Debug continue')
+map('<F6>', require('dap').run_last, 'Debug run last')
+map('<leader>dt', require('dap').terminate, '[d]ebug [t]erminate')
 map('<F10>', require('dap').step_over, 'Debug step over')
 map('<F11>', require('dap').step_into, 'Debug step into')
 map('<S-F11>', require('dap').step_out, 'Debug step out')
