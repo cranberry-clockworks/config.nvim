@@ -436,8 +436,8 @@ map('<leader>tsw', function()
 end, '[t]oggle [s]oft [w]rap')
 
 -- Telescope
-
 map('<leader>ff', require('telescope.builtin').find_files, '[f]ind [f]iles')
+map('<leader>fk', require('telescope.builtin').keymaps, '[f]ind [k]eys')
 map('<leader>fe', function()
     require('telescope').extensions.file_browser.file_browser({
         path = '%:p:h<cr>',
