@@ -230,6 +230,9 @@ require('packer').startup(function(use)
                         d.configure_debug()
                         return d.get_debug_dll_path()
                     end,
+                    args = function ()
+                        return {}
+                    end
                 },
             }
         end,
