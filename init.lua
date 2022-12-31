@@ -205,10 +205,13 @@ require('packer').startup(function(use)
                 ui.close({})
             end
 
+            -- if vim.fn.has('win32') then
+            --     netcoredbg = vim.fn.stdpath('data')
+            --         .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg'
+            -- end
             dap.adapters.netcoredbg = {
                 type = 'executable',
-                command = vim.fn.stdpath('data')
-                    .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg',
+                command = 'netcoredbg',
                 args = { '--interpreter=vscode' },
             }
 
@@ -219,11 +222,13 @@ require('packer').startup(function(use)
                     request = 'launch',
                     cwd = '${workspaceFolder}',
                     program = function()
-                        return vim.fn.input(
-                            'Path to dll: ',
-                            vim.fn.getcwd(),
-                            'file'
-                        )
+                        local d = require('dotnet-tools')
+                        local path = d.get_debug_dll_path()
+                        if path then
+                            return path
+                        end
+                        d.configure_debug()
+                        return d.get_debug_dll_path()
                     end,
                 },
             }
