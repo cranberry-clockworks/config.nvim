@@ -552,3 +552,5 @@ map(
     '<cmd>diffget //3 | diffupdate<cr>',
     'Select for [d]iff from [r]ight column'
 )
+
+require('dotnet-tools').setup()
