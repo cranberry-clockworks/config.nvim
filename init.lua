@@ -227,8 +227,7 @@ require('packer').startup(function(use)
                         if path then
                             return path
                         end
-                        d.configure_debug()
-                        return d.get_debug_dll_path()
+                        error('Select the debug target using the :DotnetTargetDebug command first')
                     end,
                     args = function ()
                         return {}
