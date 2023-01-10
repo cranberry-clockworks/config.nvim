@@ -39,10 +39,15 @@ local function select_debug_dll_with_telescope(callback)
         root = vim.fs.dirname(project_path)
     end
 
+    local search_dirs = {}
+    for line in string.gmatch(vim.fn.expand('**/bin'), "[^\n]+") do
+        table.insert(search_dirs, line)
+    end
+
     require('telescope.builtin').find_files({
         cwd = root,
         prompt_title = 'Select .NET debug DLL entry',
-        search_dirs = { '**/bin' },
+        search_dirs = search_dirs,
         search_file = '*.dll',
         no_ignore = true,
         attach_mappings = function()
