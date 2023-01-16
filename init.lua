@@ -27,6 +27,7 @@ require('packer').startup(function(use)
             vim.cmd('colorscheme kanagawa')
         end,
     })
+    use({ 'cranberry-clockworks/coal.nvim' })
     use({ 'tpope/vim-fugitive' })
     use({ 'tpope/vim-surround' })
     use({
@@ -205,33 +206,35 @@ require('packer').startup(function(use)
                 ui.close({})
             end
 
-            -- if vim.fn.has('win32') then
-            --     netcoredbg = vim.fn.stdpath('data')
-            --         .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg'
-            -- end
-            dap.adapters.netcoredbg = {
+            local netcoredbg = 'netcoredbg'
+            if vim.fn.has('win32') then
+                netcoredbg = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe'
+            end
+            dap.adapters.coreclr = {
                 type = 'executable',
-                command = 'netcoredbg',
+                command = netcoredbg,
                 args = { '--interpreter=vscode' },
             }
 
             dap.configurations.cs = {
                 {
-                    type = 'netcoredbg',
+                    type = 'coreclr',
                     name = 'launch - netcoredbg',
                     request = 'launch',
-                    cwd = '${workspaceFolder}',
+                    -- cwd = '${workspaceFolder}',
                     program = function()
                         local d = require('dotnet-tools')
                         local path = d.get_debug_dll_path()
                         if path then
                             return path
                         end
-                        error('Select the debug target using the :DotnetTargetDebug command first')
+                        error(
+                            'Select the debug target using the :DotnetTargetDebug command first'
+                        )
                     end,
-                    args = function ()
+                    args = function()
                         return {}
-                    end
+                    end,
                 },
             }
         end,
