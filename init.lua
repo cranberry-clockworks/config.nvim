@@ -1,354 +1,4 @@
-﻿local ensure_packer = function()
-    local fn = vim.fn
-    local install_path = fn.stdpath('data')
-        .. '/site/pack/packer/start/packer.nvim'
-    if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({
-            'git',
-            'clone',
-            '--depth',
-            '1',
-            'https://github.com/wbthomason/packer.nvim',
-            install_path,
-        })
-        vim.cmd('packadd packer.nvim')
-        return true
-    end
-    return false
-end
-
-local packer_bootstrap = ensure_packer()
-
-require('packer').startup(function(use)
-    use({ 'wbthomason/packer.nvim' })
-    use({
-        'rebelot/kanagawa.nvim',
-        config = function()
-            vim.cmd('colorscheme kanagawa')
-        end,
-    })
-    use({ 'cranberry-clockworks/coal.nvim' })
-    use({ 'tpope/vim-fugitive' })
-    use({ 'tpope/vim-surround' })
-    use({
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-            require('nvim-treesitter.install').compilers = { 'clang' }
-            require('nvim-treesitter.install').update({ with_sync = true })()
-        end,
-        config = function()
-            require('nvim-treesitter.configs').setup({
-                auto_install = true,
-                highlight = {
-                    enable = true,
-                },
-            })
-        end,
-    })
-    use({
-        'nvim-telescope/telescope.nvim',
-        requires = {
-            'nvim-lua/popup.nvim',
-            'nvim-lua/plenary.nvim',
-            'cranberry-knight/telescope-compiler.nvim',
-            'nvim-telescope/telescope-file-browser.nvim',
-        },
-        config = function()
-            local telescope = require('telescope')
-            telescope.setup({
-                defaults = {
-                    vimgrep_arguments = {
-                        'rg',
-                        '--color=never',
-                        '--no-heading',
-                        '--with-filename',
-                        '--line-number',
-                        '--column',
-                        '--smart-case',
-                        '--trim',
-                    },
-                },
-                pickers = {
-                    find_files = {
-                        previewer = false,
-                    },
-                    buffers = {
-                        previewer = false,
-                        mappings = {
-                            i = { ['<c-w>'] = 'delete_buffer' },
-                            n = { ['<c-w>'] = 'delete_buffer' },
-                        },
-                    },
-                },
-                extensions = {
-                    file_browser = {
-                        previewer = false,
-                        theme = 'ivy',
-                        dir_icon = '■',
-                        grouped = true,
-                    },
-                },
-            })
-            telescope.load_extension('compiler')
-            telescope.load_extension('file_browser')
-        end,
-    })
-    use({
-        'VonHeikemen/lsp-zero.nvim',
-        requires = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
-
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
-
-            -- Signature
-            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
-            { 'jose-elias-alvarez/null-ls.nvim' },
-        },
-        config = function()
-            local lsp = require('lsp-zero')
-            lsp.preset('recommended')
-            lsp.set_preferences({
-                sign_icons = {
-                    error = 'E',
-                    warn = 'W',
-                    hint = 'H',
-                    info = 'I',
-                },
-            })
-
-            local sources = lsp.defaults.cmp_sources()
-            table.insert(sources, { name = 'nvim_lsp_signature_help' })
-
-            lsp.setup_nvim_cmp({
-                sources = sources,
-            })
-
-            lsp.configure('sumneko_lua', {
-                settings = {
-                    Lua = {
-                        runtime = {
-                            version = 'LuaJIT',
-                        },
-                        diagnostics = {
-                            globals = { 'vim' },
-                        },
-                        workspace = {
-                            library = vim.api.nvim_get_runtime_file('', true),
-                        },
-                        telemetry = {
-                            enable = false,
-                        },
-                    },
-                },
-            })
-
-            local null_ls = require('null-ls')
-            null_ls.setup({
-                on_attach = lsp.build_options('null-ls').on_attach,
-                sources = {
-                    null_ls.builtins.diagnostics.vale.with({
-                        extra_args = {
-                            '--config',
-                            vim.fn.expand(
-                                vim.opt.runtimepath:get()[1] .. '/vale.ini'
-                            ),
-                        },
-                        extra_filetypes = { 'gitcommit' },
-                    }),
-                    null_ls.builtins.formatting.stylua,
-                    null_ls.builtins.formatting.csharpier,
-                    null_ls.builtins.formatting.prettier,
-                },
-            })
-
-            lsp.setup()
-        end,
-    })
-    use({
-        'rcarriga/nvim-dap-ui',
-        requires = {
-            'mfussenegger/nvim-dap',
-        },
-        config = function()
-            local dap = require('dap')
-            local ui = require('dapui')
-            ui.setup({
-                icons = {
-                    expanded = '▾',
-                    collapsed = '▸',
-                    current_frame = '→',
-                },
-                controls = {
-                    enabled = false,
-                },
-            })
-
-            dap.listeners.after.event_initialized['dapui_config'] = function()
-                ui.open({})
-            end
-            dap.listeners.before.event_terminated['dapui_config'] = function()
-                ui.close({})
-            end
-            dap.listeners.before.event_exited['dapui_config'] = function()
-                ui.close({})
-            end
-
-            local netcoredbg = 'netcoredbg'
-            if vim.fn.has('win32') then
-                netcoredbg = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe'
-            end
-            dap.adapters.coreclr = {
-                type = 'executable',
-                command = netcoredbg,
-                args = { '--interpreter=vscode' },
-            }
-
-            dap.configurations.cs = {
-                {
-                    type = 'coreclr',
-                    name = 'launch - netcoredbg',
-                    request = 'launch',
-                    -- cwd = '${workspaceFolder}',
-                    program = function()
-                        local d = require('dotnet-tools')
-                        local path = d.get_debug_dll_path()
-                        if path then
-                            return path
-                        end
-                        error(
-                            'Select the debug target using the :DotnetTargetDebug command first'
-                        )
-                    end,
-                    args = function()
-                        return {}
-                    end,
-                },
-            }
-        end,
-    })
-    use({
-        'nvim-neotest/neotest',
-        requires = {
-            'nvim-lua/plenary.nvim',
-            'nvim-treesitter/nvim-treesitter',
-            'antoinemadec/FixCursorHold.nvim',
-            'Issafalcon/neotest-dotnet',
-        },
-        config = function()
-            require('neotest').setup({
-                icons = {
-                    child_indent = '│',
-                    child_prefix = '├',
-                    collapsed = '─',
-                    expanded = '╮',
-                    failed = '♦',
-                    final_child_indent = ' ',
-                    final_child_prefix = '╰',
-                    non_collapsible = '─',
-                    passed = '♦',
-                    running = '♦',
-                    running_animated = {
-                        '⠁',
-                        '⠂',
-                        '⠄',
-                        '⡀',
-                        '⡈',
-                        '⡐',
-                        '⡠',
-                        '⣀',
-                        '⣁',
-                        '⣂',
-                        '⣄',
-                        '⣌',
-                        '⣔',
-                        '⣤',
-                        '⣥',
-                        '⣦',
-                        '⣮',
-                        '⣶',
-                        '⣷',
-                        '⣿',
-                        '⡿',
-                        '⠿',
-                        '⢟',
-                        '⠟',
-                        '⡛',
-                        '⠛',
-                        '⠫',
-                        '⢋',
-                        '⠋',
-                        '⠍',
-                        '⡉',
-                        '⠉',
-                        '⠑',
-                        '⠡',
-                        '⢁',
-                    },
-                    skipped = '♦',
-                    unknown = '♦',
-                },
-                adapters = {
-                    require('neotest-dotnet'),
-                },
-            })
-        end,
-    })
-    use({
-        'numToStr/Comment.nvim',
-        config = function()
-            require('Comment').setup()
-        end,
-    })
-    use({
-        'danymat/neogen',
-        requires = { 'nvim-treesitter/nvim-treesitter' },
-        config = function()
-            local ng = require('neogen')
-            ng.setup({
-                snippet_engine = 'luasnip',
-                languages = {
-                    cs = {
-                        template = {
-                            annotation_convention = 'xmldoc',
-                        },
-                    },
-                },
-            })
-        end,
-    })
-    use({
-        'nvim-lualine/lualine.nvim',
-        requires = { 'kyazdani42/nvim-web-devicons', opt = true },
-        config = function()
-            require('lualine').setup({
-                options = {
-                    icons_enabled = false,
-                    component_separators = { left = '', right = '' },
-                    section_separators = { left = '', right = '' },
-                },
-            })
-        end,
-    })
-
-    if packer_bootstrap then
-        require('packer').sync()
-    end
-end)
-
--- Essentials
+﻿-- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
@@ -395,8 +45,8 @@ vim.opt.listchars = {
 
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'
-vim.opt.bomb = true
-vim.opt.ffs = { 'dos', 'unix' }
+vim.opt.bomb = false
+vim.opt.ffs = { 'unix', 'dos' }
 
 -- Netrw
 vim.g.netrw_banner = 0
@@ -405,6 +55,109 @@ vim.g.netrw_list_hide = '^\\./$'
 
 -- Keymaps
 vim.g.mapleader = ' '
+
+-- Lazy bootstrap
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+    if vim.v.shell_error ~= 0 then
+        vim.api.nvim_echo({
+            { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+            { out, "WarningMsg" },
+            { "\nPress any key to exit..." },
+        }, true, {})
+        vim.fn.getchar()
+        os.exit(1)
+    end
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+    { "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    opts = {
+        auto_install = true,
+        ensure_installed = { "lua", }, 
+        highlight = { enable = true }, 
+        indent = { enable = true },
+        }
+    },
+{ 
+    "tpope/vim-fugitive",
+    cmd = { "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" } 
+},
+{
+    'nvim-telescope/telescope.nvim',
+    branch = '0.1.x',
+    dependencies = { 
+        'nvim-lua/plenary.nvim',
+        'cranberry-knight/telescope-compiler.nvim',
+        'nvim-telescope/telescope-file-browser.nvim',
+    },
+    opts = {
+        defaults = {
+            vimgrep_arguments = {
+                'rg',
+                '--color=never',
+                '--no-heading',
+                '--with-filename',
+                '--line-number',
+                '--column',
+                '--smart-case',
+                '--trim',
+            },
+        },
+        pickers = {
+            find_files = {
+                previewer = false,
+            },
+            buffers = {
+                previewer = false,
+                mappings = {
+                    i = { ['<c-w>'] = 'delete_buffer' },
+                    n = { ['<c-w>'] = 'delete_buffer' },
+                },
+            },
+        },
+        extensions = {
+            file_browser = {
+                previewer = false,
+                theme = 'ivy',
+                dir_icon = '■',
+                grouped = true,
+            },
+        },
+    }
+},
+{
+    'nvim-lualine/lualine.nvim',
+    dependencies = {
+        'kyazdani42/nvim-web-devicons' 
+    },
+    opts = {
+        options = {
+            icons_enabled = false,
+            component_separators = { left = '', right = '' },
+            section_separators = { left = '', right = '' },
+        },
+    }
+},
+{ 
+    "williamboman/mason.nvim",
+    build = ":MasonUpdate",
+    config = true
+},
+{ 
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = "mason.nvim",
+    opts = { 
+        ensure_installed = {
+            "lua_ls", 
+        }
+    },
+}
+})
 
 local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
