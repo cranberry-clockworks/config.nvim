@@ -64,7 +64,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     if vim.v.shell_error ~= 0 then
         vim.api.nvim_echo({
             { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-            { out, "WarningMsg" },
+            { out,                            "WarningMsg" },
             { "\nPress any key to exit..." },
         }, true, {})
         vim.fn.getchar()
@@ -74,93 +74,140 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    { "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    opts = {
-        auto_install = true,
-        ensure_installed = { "lua", }, 
-        highlight = { enable = true }, 
-        indent = { enable = true },
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+        opts = {
+            auto_install = true,
+            ensure_installed = { "lua", },
+            highlight = { enable = true },
+            indent = { enable = true },
         }
     },
-{ 
-    "tpope/vim-fugitive",
-    cmd = { "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" } 
-},
-{
-    'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
-    dependencies = { 
-        'nvim-lua/plenary.nvim',
-        'cranberry-knight/telescope-compiler.nvim',
-        'nvim-telescope/telescope-file-browser.nvim',
+    {
+        "tpope/vim-fugitive",
+        cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" }
     },
-    opts = {
-        defaults = {
-            vimgrep_arguments = {
-                'rg',
-                '--color=never',
-                '--no-heading',
-                '--with-filename',
-                '--line-number',
-                '--column',
-                '--smart-case',
-                '--trim',
-            },
+    {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'cranberry-knight/telescope-compiler.nvim',
+            'nvim-telescope/telescope-file-browser.nvim',
         },
-        pickers = {
-            find_files = {
-                previewer = false,
-            },
-            buffers = {
-                previewer = false,
-                mappings = {
-                    i = { ['<c-w>'] = 'delete_buffer' },
-                    n = { ['<c-w>'] = 'delete_buffer' },
+        opts = {
+            defaults = {
+                vimgrep_arguments = {
+                    'rg',
+                    '--color=never',
+                    '--no-heading',
+                    '--with-filename',
+                    '--line-number',
+                    '--column',
+                    '--smart-case',
+                    '--trim',
                 },
             },
-        },
-        extensions = {
-            file_browser = {
-                previewer = false,
-                theme = 'ivy',
-                dir_icon = '■',
-                grouped = true,
+            pickers = {
+                find_files = {
+                    previewer = false,
+                },
+                buffers = {
+                    previewer = false,
+                    mappings = {
+                        i = { ['<c-w>'] = 'delete_buffer' },
+                        n = { ['<c-w>'] = 'delete_buffer' },
+                    },
+                },
             },
-        },
-    }
-},
-{
-    'nvim-lualine/lualine.nvim',
-    dependencies = {
-        'kyazdani42/nvim-web-devicons' 
-    },
-    opts = {
-        options = {
-            icons_enabled = false,
-            component_separators = { left = '', right = '' },
-            section_separators = { left = '', right = '' },
-        },
-    }
-},
-{ 
-    "williamboman/mason.nvim",
-    build = ":MasonUpdate",
-    config = true
-},
-{ 
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = "mason.nvim",
-    opts = { 
-        ensure_installed = {
-            "lua_ls", 
+            extensions = {
+                file_browser = {
+                    previewer = false,
+                    theme = 'ivy',
+                    dir_icon = '■',
+                    grouped = true,
+                },
+            },
         }
     },
-}
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = {
+            'kyazdani42/nvim-web-devicons'
+        },
+        opts = {
+            options = {
+                icons_enabled = false,
+                component_separators = { left = '', right = '' },
+                section_separators = { left = '', right = '' },
+            },
+        }
+    },
+    {
+        "williamboman/mason.nvim",
+        build = ":MasonUpdate",
+        config = true
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = "mason.nvim",
+        opts = {
+            ensure_installed = {
+                "lua_ls",
+            }
+        },
+    },
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = { "mason-lspconfig.nvim" },
+        config = function()
+            -- Set up LSP servers installed via Mason
+            local lspconfig = require("lspconfig")
+            require("mason-lspconfig").setup_handlers({
+                -- default handler (for servers with default config)
+                function(server_name)
+                    lspconfig[server_name].setup({ on_attach = on_attach, capabilities = capabilities })
+                end,
+                -- custom setup for specific servers (example: Lua)
+                ["lua_ls"] = function()
+                    lspconfig.lua_ls.setup({
+                        on_attach = on_attach,
+                        settings = {
+                            Lua = {
+                                diagnostics = { globals = { "vim" } }, -- recognize `vim` global
+                                telemetry = { enable = false }
+                            }
+                        }
+                    })
+                end,
+            })
+            -- Diagnostic config (for example, disable virtual text)
+            vim.diagnostic.config({ virtual_text = true, float = { border = "rounded" } })
+        end
+    },
 })
 
 local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
+end
+
+function on_attach(client, bufnr)
+    -- Enable omnifunc for builtin completion
+    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    -- Enable built-in LSP completions (Neovim 0.11+)
+    vim.lsp.completion.enable() -- now LSP suggestions will auto-show in completion menu
+
+    -- Keymaps for LSP actions (buffer-local)
+    local opts = { buffer = bufnr, noremap = true, silent = true }
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+    -- etc. (add more as desired)
 end
 
 -- Reload configuration
