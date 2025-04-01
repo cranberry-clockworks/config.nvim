@@ -87,7 +87,12 @@ require("lazy").setup({
     },
     {
         "tpope/vim-fugitive",
-        cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" }
+        cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" },
+        keys = {
+            { '<leader>dw', '<cmd>Gwrite<cr>',                   desc = '[d]iff [w]rite' },
+            { '<leader>dl', '<cmd>diffget //2 | diffupdate<cr>', desc = 'Select for [d]iff from [l]eft column' },
+            { '<leader>dr', '<cmd>diffget //3 | diffupdate<cr>', desc = 'Select for [d]iff from [r]ight column' }
+        }
     },
     {
         "kylechui/nvim-surround",
@@ -198,14 +203,18 @@ require("lazy").setup({
         "neovim/nvim-lspconfig",
         dependencies = { "mason-lspconfig.nvim" },
         keys = {
-            { '<leader>lr',     function() vim.lsp.buf.rename() end,                                                         desc = '[l]SP [r]ename' },
-            { '<leader>lf',     function() vim.lsp.buf.format() end,                                                         desc = '[l]SP [f]ormat' },
-            { '<leader>ll',     function() vim.diagnostic.setloclist() end,                                                  desc = 'Put [l]sp diagnostics to [l]ocation list' },
-            { '<leader>l<del>', function()
-                vim.cmd('LspStop')
-                vim.diagnostic.reset()
-                vim.notify('Detached LSP servers')
-            end,                                                                                                             desc = '[de]tach [l]sp server' },
+            { '<leader>lr', function() vim.lsp.buf.rename() end,        desc = '[l]SP [r]ename' },
+            { '<leader>lf', function() vim.lsp.buf.format() end,        desc = '[l]SP [f]ormat' },
+            { '<leader>ll', function() vim.diagnostic.setloclist() end, desc = 'Put [l]sp diagnostics to [l]ocation list' },
+            {
+                '<leader>l<del>',
+                function()
+                    vim.cmd('LspStop')
+                    vim.diagnostic.reset()
+                    vim.notify('Detached LSP servers')
+                end,
+                desc = '[de]tach [l]sp server'
+            },
         },
         config = function()
             local lspconfig = require("lspconfig")
@@ -289,22 +298,57 @@ require("lazy").setup({
                 },
             }
         end,
+        keys = {
+            { '<leader>db', function() require('dap').toggle_breakpoint() end,                                    desc = 'Toggle [d]ebug [b]reakpoint' },
+            { '<leader>dc', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = 'Toggle [d]ebug breakpoint wiht [c]ondition' },
+            { '<F5>',       function() require('dap').continue() end,                                             desc = 'Debug continue' },
+            { '<F6>',       function() require('dap').run_last() end,                                             desc = 'Debug run last' },
+            { '<leader>dt', function() require('dap').terminate() end,                                            desc = '[d]ebug [t]erminate' },
+            { '<F10>',      function() require('dap').step_over() end,                                            desc = 'Debug step over' },
+            { '<F11>',      function() require('dap').step_into() end,                                            desc = 'Debug step into' },
+            { '<S-F11>',    function() require('dap').step_out() end,                                             desc = 'Debug step out' },
+            { '<leader>do', function() require('dap').repl.open() end,                                            desc = 'Debug [o]pen repl' },
+            { '<leader>du', function() require('dapui').toggle() end,                                             desc = 'Debug toggle [u]i' },
+        }
     },
-    -- {
-    --     "nvim-neotest/neotest",
-    --     dependencies = {
-    --         "nvim-neotest/nvim-nio",
-    --         "nvim-lua/plenary.nvim",
-    --         "antoinemadec/FixCursorHold.nvim",
-    --         "nvim-treesitter/nvim-treesitter",
-    --         'Issafalcon/neotest-dotnet',
-    --     },
-    --     opts = {
-    --         adapters = {
-    --             require('neotest-dotnet'),
-    --         },
-    --     }
-    -- }
+    {
+        "nvim-neotest/neotest",
+        dependencies = {
+            "nvim-neotest/nvim-nio",
+            "nvim-lua/plenary.nvim",
+            "antoinemadec/FixCursorHold.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            'Issafalcon/neotest-dotnet',
+        },
+        opts = function()
+            return {
+                adapters = {
+                    require('neotest-dotnet'),
+                }
+            }
+        end,
+        keys = {
+            {
+                '<leader>tu',
+                function()
+                    local nt = require('neotest')
+                    nt.summary.toggle()
+                    nt.output_panel.toggle()
+                end,
+                desc = '[t]oggle [t]est view'
+            },
+            { '<leader>tr', function()
+                local nt = require('neotest')
+                nt.output_panel.open()
+                nt.run.run()
+            end, '[t]est [r]un current method' },
+            { '<leader>td', function()
+                local nt = require('neotest')
+                nt.output_panel.close()
+                nt.run.run({ strategy = 'dap' })
+            end, '[t]est [d]ebug current method' },
+        }
+    }
 })
 
 
@@ -345,55 +389,5 @@ map('<leader>tsw', function()
     vim.cmd('set wrap!')
     vim.notify('Enable text soft wrap')
 end, '[t]oggle [s]oft [w]rap')
-
--- DAP
-map(
-    '<leader>db',
-    require('dap').toggle_breakpoint,
-    'Toggle [d]ebug [b]reakpoint'
-)
-map('<leader>dc', function()
-    require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))
-end, 'Toggle [d]ebug breakpoint wiht [c]ondition')
-
-map('<F5>', require('dap').continue, 'Debug continue')
-map('<F6>', require('dap').run_last, 'Debug run last')
-map('<leader>dt', require('dap').terminate, '[d]ebug [t]erminate')
-map('<F10>', require('dap').step_over, 'Debug step over')
-map('<F11>', require('dap').step_into, 'Debug step into')
-map('<S-F11>', require('dap').step_out, 'Debug step out')
-
-map('<leader>do', require('dap').repl.open, 'Debug [o]pen repl')
-map('<leader>du', require('dapui').toggle, 'Debug toggle [u]i')
-
--- Neotest
-map('<leader>tu', function()
-    local nt = require('neotest')
-    nt.summary.toggle()
-    nt.output_panel.toggle()
-end, '[t]oggle [t]est view')
-map('<leader>tr', function()
-    local nt = require('neotest')
-    nt.output_panel.open()
-    nt.run.run()
-end, '[t]est [r]un current method')
-map('<leader>td', function()
-    local nt = require('neotest')
-    nt.output_panel.close()
-    nt.run.run({ strategy = 'dap' })
-end, '[t]est [d]ebug current method')
-
--- Diff
-map('<leader>dw', '<cmd>Gwrite<cr>', '[d]iff [w]rite')
-map(
-    '<leader>dl',
-    '<cmd>diffget //2 | diffupdate<cr>',
-    'Select for [d]iff from [l]eft column'
-)
-map(
-    '<leader>dr',
-    '<cmd>diffget //3 | diffupdate<cr>',
-    'Select for [d]iff from [r]ight column'
-)
 
 require('dotnet-tools').setup()
