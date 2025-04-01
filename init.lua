@@ -3,7 +3,8 @@ vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
 -- Behaviours
-vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
+vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect', 'popup' }
+vim.o.pumheight = 15
 vim.opt.hidden = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -89,12 +90,33 @@ require("lazy").setup({
         cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" }
     },
     {
+        "kylechui/nvim-surround",
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({})
+        end
+    },
+    {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
         dependencies = {
             'nvim-lua/plenary.nvim',
             'cranberry-knight/telescope-compiler.nvim',
             'nvim-telescope/telescope-file-browser.nvim',
+        },
+        keys = {
+            { '<leader>ff', function() require('telescope.builtin').find_files() end,                                          desc = '[f]ind [f]iles' },
+            { '<leader>fk', function() require('telescope.builtin').keymaps() end,                                             desc = '[f]ind [k]eys' },
+            { '<leader>fe', function() require('telescope').extensions.file_browser.file_browser({ path = '%:p:h<cr>', }) end, desc = 'Browse [f]iles [e]xplore around current one' },
+            { '<leader>fc', function() require('telescope').extensions.file_browser.file_browser() end,                        desc = 'Browse [f]iles in [c]urrent working directory' },
+            { '<leader>fb', function() require('telescope.builtin').buffers() end,                                             desc = '[f]ind [b]uffer' },
+            { '<leader>fg', function() require('telescope.builtin').live_grep() end,                                           desc = '[f]ind with [g]rep' },
+            { '<leader>sf', function() require('telescope.builtin').filetypes() end,                                           desc = '[s]elect [f]iletype' },
+            { '<leader>sc', function() require('telescope').extensions.compiler.compiler() end,                                desc = '[s]elect [c]ompiler' },
+            { '<leader>ss', function() require('telescope.builtin').spell_suggest() end,                                       desc = '[s]pell [s]uggests' },
+            { '<leader>gb', function() require('telescope.builtin').git_branches() end,                                        desc = '[g]it [b]ranches' },
+            { '<leader>gs', function() require('telescope.builtin').git_status() end,                                          desc = '[g]it [s]tatus' },
+            { '<leader>ws', function() require('telescope.builtin').lsp_dynamic_workspace_symbols() end,                       desc = 'Browse [w]orkspace [s]ymbols' },
         },
         opts = {
             defaults = {
@@ -145,6 +167,20 @@ require("lazy").setup({
         }
     },
     {
+        "danymat/neogen",
+        config = true,
+        version = "*",
+        opts = {
+            cs = {
+                template = {
+                    annotation_convention = 'xmldoc'
+                }
+            }
+        }
+    },
+    { 'echasnovski/mini.comment', version = '*', config = function() require('mini.comment').setup() end },
+    { 'echasnovski/mini.pairs',   version = '*', config = function() require('mini.pairs').setup() end },
+    {
         "williamboman/mason.nvim",
         build = ":MasonUpdate",
         config = true
@@ -161,53 +197,120 @@ require("lazy").setup({
     {
         "neovim/nvim-lspconfig",
         dependencies = { "mason-lspconfig.nvim" },
+        keys = {
+            { '<leader>lr',     function() vim.lsp.buf.rename() end,                                                         desc = '[l]SP [r]ename' },
+            { '<leader>lf',     function() vim.lsp.buf.format() end,                                                         desc = '[l]SP [f]ormat' },
+            { '<leader>ll',     function() vim.diagnostic.setloclist() end,                                                  desc = 'Put [l]sp diagnostics to [l]ocation list' },
+            { '<leader>l<del>', function()
+                vim.cmd('LspStop')
+                vim.diagnostic.reset()
+                vim.notify('Detached LSP servers')
+            end,                                                                                                             desc = '[de]tach [l]sp server' },
+        },
         config = function()
-            -- Set up LSP servers installed via Mason
             local lspconfig = require("lspconfig")
+            local function on_attach(client, bufnr)
+                vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+                vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true, })
+            end
             require("mason-lspconfig").setup_handlers({
-                -- default handler (for servers with default config)
                 function(server_name)
-                    lspconfig[server_name].setup({ on_attach = on_attach, capabilities = capabilities })
+                    lspconfig[server_name].setup({ on_attach = on_attach })
                 end,
-                -- custom setup for specific servers (example: Lua)
                 ["lua_ls"] = function()
                     lspconfig.lua_ls.setup({
                         on_attach = on_attach,
                         settings = {
                             Lua = {
-                                diagnostics = { globals = { "vim" } }, -- recognize `vim` global
+                                diagnostics = { globals = { "vim" } },
                                 telemetry = { enable = false }
                             }
                         }
                     })
                 end,
             })
-            -- Diagnostic config (for example, disable virtual text)
-            vim.diagnostic.config({ virtual_text = true, float = { border = "rounded" } })
+            vim.diagnostic.config({ virtual_lines = true, })
         end
     },
+    {
+        'mfussenegger/nvim-dap',
+        dependencies = {
+            "nvim-neotest/nvim-nio",
+            'rcarriga/nvim-dap-ui',
+        },
+        config = function()
+            local dap = require('dap')
+            local ui = require('dapui')
+            ui.setup({
+                icons = {
+                    expanded = '▾',
+                    collapsed = '▸',
+                    current_frame = '→',
+                },
+                controls = {
+                    enabled = false,
+                },
+            })
+
+            dap.listeners.after.event_initialized['dapui_config'] = function()
+                ui.open({})
+            end
+            dap.listeners.before.event_terminated['dapui_config'] = function()
+                ui.close({})
+            end
+            dap.listeners.before.event_exited['dapui_config'] = function()
+                ui.close({})
+            end
+
+            dap.adapters.coreclr = {
+                type = 'executable',
+                command = 'netcoredbg',
+                args = { '--interpreter=vscode' },
+            }
+
+            dap.configurations.cs = {
+                {
+                    type = 'coreclr',
+                    name = 'Launch netcoredbg',
+                    request = 'launch',
+                    program = function()
+                        local d = require('dotnet-tools')
+                        local path = d.get_debug_dll_path()
+                        if path then
+                            return path
+                        end
+                        error(
+                            'Select the debug target using the :DotnetTargetDebug command first'
+                        )
+                    end,
+                    args = function()
+                        return {}
+                    end,
+                },
+            }
+        end,
+    },
+    -- {
+    --     "nvim-neotest/neotest",
+    --     dependencies = {
+    --         "nvim-neotest/nvim-nio",
+    --         "nvim-lua/plenary.nvim",
+    --         "antoinemadec/FixCursorHold.nvim",
+    --         "nvim-treesitter/nvim-treesitter",
+    --         'Issafalcon/neotest-dotnet',
+    --     },
+    --     opts = {
+    --         adapters = {
+    --             require('neotest-dotnet'),
+    --         },
+    --     }
+    -- }
 })
+
+
 
 local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
-end
-
-function on_attach(client, bufnr)
-    -- Enable omnifunc for builtin completion
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-    -- Enable built-in LSP completions (Neovim 0.11+)
-    vim.lsp.completion.enable() -- now LSP suggestions will auto-show in completion menu
-
-    -- Keymaps for LSP actions (buffer-local)
-    local opts = { buffer = bufnr, noremap = true, silent = true }
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-    -- etc. (add more as desired)
 end
 
 -- Reload configuration
@@ -217,8 +320,6 @@ map('<F12>', function()
 end, 'Load configuration again')
 
 -- Generic
-map('<leader>n', '<cmd>nohlsearch<cr>', '[n]o highlight search')
-
 map('<leader>tsc', function()
     if vim.wo.spell then
         vim.wo.spell = false
@@ -244,54 +345,6 @@ map('<leader>tsw', function()
     vim.cmd('set wrap!')
     vim.notify('Enable text soft wrap')
 end, '[t]oggle [s]oft [w]rap')
-
--- Telescope
-map('<leader>ff', require('telescope.builtin').find_files, '[f]ind [f]iles')
-map('<leader>fk', require('telescope.builtin').keymaps, '[f]ind [k]eys')
-map('<leader>fe', function()
-    require('telescope').extensions.file_browser.file_browser({
-        path = '%:p:h<cr>',
-    })
-end, 'Browse [F]iles [E]xplore around current one')
-map(
-    '<leader>fc',
-    require('telescope').extensions.file_browser.file_browser,
-    'Browse [f]iles in [c]urrent working directory'
-)
-map('<leader>fb', require('telescope.builtin').buffers, '[f]ind [b]uffer')
-map('<leader>fg', require('telescope.builtin').live_grep, '[f]ind with [g]rep')
-map('<leader>sf', require('telescope.builtin').filetypes, '[s]elect [f]iletype')
-map(
-    '<leader>sc',
-    require('telescope').extensions.compiler.compiler,
-    '[s]elect [c]ompiler'
-)
-map(
-    '<leader>ss',
-    require('telescope.builtin').spell_suggest,
-    '[s]pell [s]uggests'
-)
-map('<leader>gb', require('telescope.builtin').git_branches, '[g]it [b]ranches')
-map('<leader>gs', require('telescope.builtin').git_status, '[g]it [s]tatus')
-map(
-    '<leader>ws',
-    require('telescope.builtin').lsp_dynamic_workspace_symbols,
-    'Browse [w]orkspace [s]ymbols'
-)
-
--- LSP
-map('<leader>lr', vim.lsp.buf.rename, '[l]SP [r]ename')
-map('<leader>lf', vim.lsp.buf.format, '[l]SP [f]ormat')
-map(
-    '<leader>ll',
-    vim.diagnostic.setloclist,
-    'Put [l]sp diagnostics to [l]ocation list'
-)
-map('<leader>l<del>', function()
-    vim.cmd('LspStop')
-    vim.diagnostic.reset()
-    vim.notify('Detached LSP servers')
-end, '[de]tach [l]sp server')
 
 -- DAP
 map(
@@ -329,26 +382,6 @@ map('<leader>td', function()
     nt.output_panel.close()
     nt.run.run({ strategy = 'dap' })
 end, '[t]est [d]ebug current method')
-
--- Quickfix list
-map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
-map(
-    '<leader>cp',
-    '<cmd>cprev<cr>',
-    'Select [p]revious item in the quickfix list'
-)
-map('<leader>co', '<cmd>copen<cr>', '[o]pen the quickfix list')
-map('<leader>cc', '<cmd>cclose<cr>', '[c]lose the quickfix list')
-
--- Location list
-map('<leader>ln', '<cmd>lnext<cr>', 'Select [n]ext item in the [l]ocal list')
-map(
-    '<leader>lp',
-    '<cmd>lprev<cr>',
-    'Select [p]revious item in the [l]ocal list'
-)
-map('<leader>lo', '<cmd>lopen<cr>', '[o]pen the [l]ocal list')
-map('<leader>lc', '<cmd>lclose<cr>', '[c]lose the [l]ocal list')
 
 -- Diff
 map('<leader>dw', '<cmd>Gwrite<cr>', '[d]iff [w]rite')
