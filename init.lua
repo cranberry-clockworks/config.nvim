@@ -154,6 +154,7 @@ require("lazy").setup({
                     theme = 'ivy',
                     dir_icon = '■',
                     grouped = true,
+                    hidden = true,
                 },
             },
         }
