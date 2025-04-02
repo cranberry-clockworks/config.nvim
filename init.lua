@@ -173,12 +173,13 @@ require("lazy").setup({
     },
     {
         "danymat/neogen",
-        config = true,
-        version = "*",
+        keys = {
+            { '<leader>ng', function() require('neogen').generate() end, desc = '[N]eogen [g]enarate comment' },
+        },
         opts = {
-            cs = {
-                template = {
-                    annotation_convention = 'xmldoc'
+            languages = {
+                cs = {
+                    template = { annotation_convention = "xmldoc" }
                 }
             }
         }
