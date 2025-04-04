@@ -1,4 +1,4 @@
-﻿-- Essentials
+-- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
@@ -38,10 +38,10 @@ vim.opt.signcolumn = 'yes'
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '▷ ',
-    trail = '·',
-    precedes = '«',
-    extends = '»',
+    tab = '‚ñ∑ ',
+    trail = '¬∑',
+    precedes = '¬´',
+    extends = '¬ª',
 }
 
 -- Encoding and endings
@@ -152,7 +152,7 @@ require("lazy").setup({
                 file_browser = {
                     previewer = false,
                     theme = 'ivy',
-                    dir_icon = '■',
+                    dir_icon = '‚ñ†',
                     grouped = true,
                     hidden = true,
                 },
@@ -202,8 +202,24 @@ require("lazy").setup({
         },
     },
     {
+        'saghen/blink.cmp',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+
+        version = '1.*',
+        opts = {
+            keymap = { preset = 'default' },
+
+            appearance = {
+                nerd_font_variant = 'mono'
+            },
+
+            completion = { documentation = { auto_show = false } },
+        },
+        opts_extend = { "sources.default" }
+    },
+    {
         "neovim/nvim-lspconfig",
-        dependencies = { "mason-lspconfig.nvim" },
+        dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp' },
         keys = {
             { '<leader>lr', function() vim.lsp.buf.rename() end,        desc = '[l]SP [r]ename' },
             { '<leader>lf', function() vim.lsp.buf.format() end,        desc = '[l]SP [f]ormat' },
@@ -219,18 +235,16 @@ require("lazy").setup({
             },
         },
         config = function()
+            local capabilities = require('blink.cmp').get_lsp_capabilities()
+
             local lspconfig = require("lspconfig")
-            local function on_attach(client, bufnr)
-                vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-                vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true, })
-            end
             require("mason-lspconfig").setup_handlers({
                 function(server_name)
-                    lspconfig[server_name].setup({ on_attach = on_attach })
+                    lspconfig[server_name].setup({ capabilities = capabilities })
                 end,
                 ["lua_ls"] = function()
                     lspconfig.lua_ls.setup({
-                        on_attach = on_attach,
+                        capabilities = capabilities,
                         settings = {
                             Lua = {
                                 diagnostics = { globals = { "vim" } },
@@ -240,7 +254,7 @@ require("lazy").setup({
                     })
                 end,
             })
-            vim.diagnostic.config({ virtual_lines = true, })
+            vim.diagnostic.config({ virtual_text = true, })
         end
     },
     {
@@ -254,9 +268,9 @@ require("lazy").setup({
             local ui = require('dapui')
             ui.setup({
                 icons = {
-                    expanded = '▾',
-                    collapsed = '▸',
-                    current_frame = '→',
+                    expanded = '‚ñæ',
+                    collapsed = '‚ñ∏',
+                    current_frame = '‚Üí',
                 },
                 controls = {
                     enabled = false,
@@ -312,6 +326,13 @@ require("lazy").setup({
             { '<leader>do', function() require('dap').repl.open() end,                                            desc = 'Debug [o]pen repl' },
             { '<leader>du', function() require('dapui').toggle() end,                                             desc = 'Debug toggle [u]i' },
         }
+    },
+    {
+        "github/copilot.vim",
+        config = function()
+            vim.g.copilot_no_tab_map = true
+            vim.keymap.set('i', '<C-0>', 'copilot#Accept("<CR>")', { expr = true, silent = true, replace_keycodes = false })
+        end
     },
     {
         "nvim-neotest/neotest",
