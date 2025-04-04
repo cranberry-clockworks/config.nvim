@@ -1,359 +1,10 @@
-﻿local ensure_packer = function()
-    local fn = vim.fn
-    local install_path = fn.stdpath('data')
-        .. '/site/pack/packer/start/packer.nvim'
-    if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({
-            'git',
-            'clone',
-            '--depth',
-            '1',
-            'https://github.com/wbthomason/packer.nvim',
-            install_path,
-        })
-        vim.cmd('packadd packer.nvim')
-        return true
-    end
-    return false
-end
-
-local packer_bootstrap = ensure_packer()
-
-require('packer').startup(function(use)
-    use({ 'wbthomason/packer.nvim' })
-    use({
-        'rebelot/kanagawa.nvim',
-        config = function()
-            vim.cmd('colorscheme kanagawa')
-        end,
-    })
-    use({ 'cranberry-clockworks/coal.nvim' })
-    use({ 'tpope/vim-fugitive' })
-    use({ 'tpope/vim-surround' })
-    use({
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-            require('nvim-treesitter.install').compilers = { 'clang' }
-            require('nvim-treesitter.install').update({ with_sync = true })()
-        end,
-        config = function()
-            require('nvim-treesitter.configs').setup({
-                auto_install = true,
-                highlight = {
-                    enable = true,
-                },
-            })
-        end,
-    })
-    use({
-        'nvim-telescope/telescope.nvim',
-        requires = {
-            'nvim-lua/popup.nvim',
-            'nvim-lua/plenary.nvim',
-            'cranberry-knight/telescope-compiler.nvim',
-            'nvim-telescope/telescope-file-browser.nvim',
-        },
-        config = function()
-            local telescope = require('telescope')
-            telescope.setup({
-                defaults = {
-                    vimgrep_arguments = {
-                        'rg',
-                        '--color=never',
-                        '--no-heading',
-                        '--with-filename',
-                        '--line-number',
-                        '--column',
-                        '--smart-case',
-                        '--trim',
-                    },
-                },
-                pickers = {
-                    find_files = {
-                        previewer = false,
-                    },
-                    buffers = {
-                        previewer = false,
-                        mappings = {
-                            i = { ['<c-w>'] = 'delete_buffer' },
-                            n = { ['<c-w>'] = 'delete_buffer' },
-                        },
-                    },
-                },
-                extensions = {
-                    file_browser = {
-                        previewer = false,
-                        theme = 'ivy',
-                        dir_icon = '■',
-                        grouped = true,
-                    },
-                },
-            })
-            telescope.load_extension('compiler')
-            telescope.load_extension('file_browser')
-        end,
-    })
-    use({
-        'VonHeikemen/lsp-zero.nvim',
-        requires = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
-
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
-
-            -- Signature
-            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
-            { 'jose-elias-alvarez/null-ls.nvim' },
-        },
-        config = function()
-            local lsp = require('lsp-zero')
-            lsp.preset('recommended')
-            lsp.set_preferences({
-                sign_icons = {
-                    error = 'E',
-                    warn = 'W',
-                    hint = 'H',
-                    info = 'I',
-                },
-            })
-
-            local sources = lsp.defaults.cmp_sources()
-            table.insert(sources, { name = 'nvim_lsp_signature_help' })
-
-            lsp.setup_nvim_cmp({
-                sources = sources,
-            })
-
-            lsp.configure('sumneko_lua', {
-                settings = {
-                    Lua = {
-                        runtime = {
-                            version = 'LuaJIT',
-                        },
-                        diagnostics = {
-                            globals = { 'vim' },
-                        },
-                        workspace = {
-                            library = vim.api.nvim_get_runtime_file('', true),
-                        },
-                        telemetry = {
-                            enable = false,
-                        },
-                    },
-                },
-            })
-
-            local null_ls = require('null-ls')
-            null_ls.setup({
-                on_attach = lsp.build_options('null-ls').on_attach,
-                sources = {
-                    null_ls.builtins.diagnostics.vale.with({
-                        extra_args = {
-                            '--config',
-                            vim.fn.expand(
-                                vim.opt.runtimepath:get()[1] .. '/vale.ini'
-                            ),
-                        },
-                        extra_filetypes = { 'gitcommit' },
-                    }),
-                    null_ls.builtins.formatting.stylua,
-                    null_ls.builtins.formatting.csharpier,
-                    null_ls.builtins.formatting.prettier,
-                },
-            })
-
-            lsp.setup()
-        end,
-    })
-    use({
-        'rcarriga/nvim-dap-ui',
-        requires = {
-            'mfussenegger/nvim-dap',
-        },
-        config = function()
-            local dap = require('dap')
-            local ui = require('dapui')
-            ui.setup({
-                icons = {
-                    expanded = '▾',
-                    collapsed = '▸',
-                    current_frame = '→',
-                },
-                controls = {
-                    enabled = false,
-                },
-            })
-
-            dap.listeners.after.event_initialized['dapui_config'] = function()
-                ui.open({})
-            end
-            dap.listeners.before.event_terminated['dapui_config'] = function()
-                ui.close({})
-            end
-            dap.listeners.before.event_exited['dapui_config'] = function()
-                ui.close({})
-            end
-
-            local netcoredbg = 'netcoredbg'
-            if vim.fn.has('win32') then
-                netcoredbg = vim.fn.stdpath('data') .. '/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe'
-            end
-            dap.adapters.coreclr = {
-                type = 'executable',
-                command = netcoredbg,
-                args = { '--interpreter=vscode' },
-            }
-
-            dap.configurations.cs = {
-                {
-                    type = 'coreclr',
-                    name = 'launch - netcoredbg',
-                    request = 'launch',
-                    -- cwd = '${workspaceFolder}',
-                    program = function()
-                        local d = require('dotnet-tools')
-                        local path = d.get_debug_dll_path()
-                        if path then
-                            return path
-                        end
-                        error(
-                            'Select the debug target using the :DotnetTargetDebug command first'
-                        )
-                    end,
-                    args = function()
-                        return {}
-                    end,
-                },
-            }
-        end,
-    })
-    use({
-        'nvim-neotest/neotest',
-        requires = {
-            'nvim-lua/plenary.nvim',
-            'nvim-treesitter/nvim-treesitter',
-            'antoinemadec/FixCursorHold.nvim',
-            'Issafalcon/neotest-dotnet',
-        },
-        config = function()
-            require('neotest').setup({
-                icons = {
-                    child_indent = '│',
-                    child_prefix = '├',
-                    collapsed = '─',
-                    expanded = '╮',
-                    failed = '♦',
-                    final_child_indent = ' ',
-                    final_child_prefix = '╰',
-                    non_collapsible = '─',
-                    passed = '♦',
-                    running = '♦',
-                    running_animated = {
-                        '⠁',
-                        '⠂',
-                        '⠄',
-                        '⡀',
-                        '⡈',
-                        '⡐',
-                        '⡠',
-                        '⣀',
-                        '⣁',
-                        '⣂',
-                        '⣄',
-                        '⣌',
-                        '⣔',
-                        '⣤',
-                        '⣥',
-                        '⣦',
-                        '⣮',
-                        '⣶',
-                        '⣷',
-                        '⣿',
-                        '⡿',
-                        '⠿',
-                        '⢟',
-                        '⠟',
-                        '⡛',
-                        '⠛',
-                        '⠫',
-                        '⢋',
-                        '⠋',
-                        '⠍',
-                        '⡉',
-                        '⠉',
-                        '⠑',
-                        '⠡',
-                        '⢁',
-                    },
-                    skipped = '♦',
-                    unknown = '♦',
-                },
-                adapters = {
-                    require('neotest-dotnet'),
-                },
-            })
-        end,
-    })
-    use({
-        'numToStr/Comment.nvim',
-        config = function()
-            require('Comment').setup()
-        end,
-    })
-    use({
-        'danymat/neogen',
-        requires = { 'nvim-treesitter/nvim-treesitter' },
-        config = function()
-            local ng = require('neogen')
-            ng.setup({
-                snippet_engine = 'luasnip',
-                languages = {
-                    cs = {
-                        template = {
-                            annotation_convention = 'xmldoc',
-                        },
-                    },
-                },
-            })
-        end,
-    })
-    use({
-        'nvim-lualine/lualine.nvim',
-        requires = { 'kyazdani42/nvim-web-devicons', opt = true },
-        config = function()
-            require('lualine').setup({
-                options = {
-                    icons_enabled = false,
-                    component_separators = { left = '', right = '' },
-                    section_separators = { left = '', right = '' },
-                },
-            })
-        end,
-    })
-
-    if packer_bootstrap then
-        require('packer').sync()
-    end
-end)
-
 -- Essentials
 vim.cmd('language en_GB')
 vim.g.bulitin_lsp = true
 
 -- Behaviours
-vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
+vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect', 'popup' }
+vim.o.pumheight = 15
 vim.opt.hidden = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -387,16 +38,16 @@ vim.opt.signcolumn = 'yes'
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '▷ ',
-    trail = '·',
-    precedes = '«',
-    extends = '»',
+    tab = '‚ñ∑ ',
+    trail = '¬∑',
+    precedes = '¬´',
+    extends = '¬ª',
 }
 
 -- Encoding and endings
 vim.opt.encoding = 'utf-8'
-vim.opt.bomb = true
-vim.opt.ffs = { 'dos', 'unix' }
+vim.opt.bomb = false
+vim.opt.ffs = { 'unix', 'dos' }
 
 -- Netrw
 vim.g.netrw_banner = 0
@@ -405,6 +56,325 @@ vim.g.netrw_list_hide = '^\\./$'
 
 -- Keymaps
 vim.g.mapleader = ' '
+
+-- Lazy bootstrap
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+    if vim.v.shell_error ~= 0 then
+        vim.api.nvim_echo({
+            { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+            { out,                            "WarningMsg" },
+            { "\nPress any key to exit..." },
+        }, true, {})
+        vim.fn.getchar()
+        os.exit(1)
+    end
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+        opts = {
+            auto_install = true,
+            ensure_installed = { "lua", },
+            highlight = { enable = true },
+            indent = { enable = true },
+        }
+    },
+    {
+        "tpope/vim-fugitive",
+        cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" },
+        keys = {
+            { '<leader>dw', '<cmd>Gwrite<cr>',                   desc = '[d]iff [w]rite' },
+            { '<leader>dl', '<cmd>diffget //2 | diffupdate<cr>', desc = 'Select for [d]iff from [l]eft column' },
+            { '<leader>dr', '<cmd>diffget //3 | diffupdate<cr>', desc = 'Select for [d]iff from [r]ight column' }
+        }
+    },
+    {
+        "kylechui/nvim-surround",
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({})
+        end
+    },
+    {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'cranberry-knight/telescope-compiler.nvim',
+            'nvim-telescope/telescope-file-browser.nvim',
+        },
+        keys = {
+            { '<leader>ff', function() require('telescope.builtin').find_files() end,                                          desc = '[f]ind [f]iles' },
+            { '<leader>fk', function() require('telescope.builtin').keymaps() end,                                             desc = '[f]ind [k]eys' },
+            { '<leader>fe', function() require('telescope').extensions.file_browser.file_browser({ path = '%:p:h<cr>', }) end, desc = 'Browse [f]iles [e]xplore around current one' },
+            { '<leader>fc', function() require('telescope').extensions.file_browser.file_browser() end,                        desc = 'Browse [f]iles in [c]urrent working directory' },
+            { '<leader>fb', function() require('telescope.builtin').buffers() end,                                             desc = '[f]ind [b]uffer' },
+            { '<leader>fg', function() require('telescope.builtin').live_grep() end,                                           desc = '[f]ind with [g]rep' },
+            { '<leader>sf', function() require('telescope.builtin').filetypes() end,                                           desc = '[s]elect [f]iletype' },
+            { '<leader>sc', function() require('telescope').extensions.compiler.compiler() end,                                desc = '[s]elect [c]ompiler' },
+            { '<leader>ss', function() require('telescope.builtin').spell_suggest() end,                                       desc = '[s]pell [s]uggests' },
+            { '<leader>gb', function() require('telescope.builtin').git_branches() end,                                        desc = '[g]it [b]ranches' },
+            { '<leader>gs', function() require('telescope.builtin').git_status() end,                                          desc = '[g]it [s]tatus' },
+            { '<leader>ws', function() require('telescope.builtin').lsp_dynamic_workspace_symbols() end,                       desc = 'Browse [w]orkspace [s]ymbols' },
+        },
+        opts = {
+            defaults = {
+                vimgrep_arguments = {
+                    'rg',
+                    '--color=never',
+                    '--no-heading',
+                    '--with-filename',
+                    '--line-number',
+                    '--column',
+                    '--smart-case',
+                    '--trim',
+                },
+            },
+            pickers = {
+                find_files = {
+                    previewer = false,
+                },
+                buffers = {
+                    previewer = false,
+                    mappings = {
+                        i = { ['<c-w>'] = 'delete_buffer' },
+                        n = { ['<c-w>'] = 'delete_buffer' },
+                    },
+                },
+            },
+            extensions = {
+                file_browser = {
+                    previewer = false,
+                    theme = 'ivy',
+                    dir_icon = '‚ñ†',
+                    grouped = true,
+                    hidden = true,
+                },
+            },
+        }
+    },
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = {
+            'kyazdani42/nvim-web-devicons'
+        },
+        opts = {
+            options = {
+                icons_enabled = false,
+                component_separators = { left = '', right = '' },
+                section_separators = { left = '', right = '' },
+            },
+        }
+    },
+    {
+        "danymat/neogen",
+        keys = {
+            { '<leader>ng', function() require('neogen').generate() end, desc = '[N]eogen [g]enarate comment' },
+        },
+        opts = {
+            languages = {
+                cs = {
+                    template = { annotation_convention = "xmldoc" }
+                }
+            }
+        }
+    },
+    { 'echasnovski/mini.comment', version = '*', config = function() require('mini.comment').setup() end },
+    { 'echasnovski/mini.pairs',   version = '*', config = function() require('mini.pairs').setup() end },
+    {
+        "williamboman/mason.nvim",
+        build = ":MasonUpdate",
+        config = true
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = "mason.nvim",
+        opts = {
+            ensure_installed = {
+                "lua_ls",
+            }
+        },
+    },
+    {
+        'saghen/blink.cmp',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+
+        version = '1.*',
+        opts = {
+            keymap = { preset = 'default' },
+
+            appearance = {
+                nerd_font_variant = 'mono'
+            },
+
+            completion = { documentation = { auto_show = false } },
+        },
+        opts_extend = { "sources.default" }
+    },
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp' },
+        keys = {
+            { '<leader>lr', function() vim.lsp.buf.rename() end,        desc = '[l]SP [r]ename' },
+            { '<leader>lf', function() vim.lsp.buf.format() end,        desc = '[l]SP [f]ormat' },
+            { '<leader>ll', function() vim.diagnostic.setloclist() end, desc = 'Put [l]sp diagnostics to [l]ocation list' },
+            {
+                '<leader>l<del>',
+                function()
+                    vim.cmd('LspStop')
+                    vim.diagnostic.reset()
+                    vim.notify('Detached LSP servers')
+                end,
+                desc = '[de]tach [l]sp server'
+            },
+        },
+        config = function()
+            local capabilities = require('blink.cmp').get_lsp_capabilities()
+
+            local lspconfig = require("lspconfig")
+            require("mason-lspconfig").setup_handlers({
+                function(server_name)
+                    lspconfig[server_name].setup({ capabilities = capabilities })
+                end,
+                ["lua_ls"] = function()
+                    lspconfig.lua_ls.setup({
+                        capabilities = capabilities,
+                        settings = {
+                            Lua = {
+                                diagnostics = { globals = { "vim" } },
+                                telemetry = { enable = false }
+                            }
+                        }
+                    })
+                end,
+            })
+            vim.diagnostic.config({ virtual_text = true, })
+        end
+    },
+    {
+        'mfussenegger/nvim-dap',
+        dependencies = {
+            "nvim-neotest/nvim-nio",
+            'rcarriga/nvim-dap-ui',
+        },
+        config = function()
+            local dap = require('dap')
+            local ui = require('dapui')
+            ui.setup({
+                icons = {
+                    expanded = '‚ñæ',
+                    collapsed = '‚ñ∏',
+                    current_frame = '‚Üí',
+                },
+                controls = {
+                    enabled = false,
+                },
+            })
+
+            dap.listeners.after.event_initialized['dapui_config'] = function()
+                ui.open({})
+            end
+            dap.listeners.before.event_terminated['dapui_config'] = function()
+                ui.close({})
+            end
+            dap.listeners.before.event_exited['dapui_config'] = function()
+                ui.close({})
+            end
+
+            dap.adapters.coreclr = {
+                type = 'executable',
+                command = 'netcoredbg',
+                args = { '--interpreter=vscode' },
+            }
+
+            dap.configurations.cs = {
+                {
+                    type = 'coreclr',
+                    name = 'Launch netcoredbg',
+                    request = 'launch',
+                    program = function()
+                        local d = require('dotnet-tools')
+                        local path = d.get_debug_dll_path()
+                        if path then
+                            return path
+                        end
+                        error(
+                            'Select the debug target using the :DotnetTargetDebug command first'
+                        )
+                    end,
+                    args = function()
+                        return {}
+                    end,
+                },
+            }
+        end,
+        keys = {
+            { '<leader>db', function() require('dap').toggle_breakpoint() end,                                    desc = 'Toggle [d]ebug [b]reakpoint' },
+            { '<leader>dc', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = 'Toggle [d]ebug breakpoint wiht [c]ondition' },
+            { '<F5>',       function() require('dap').continue() end,                                             desc = 'Debug continue' },
+            { '<F6>',       function() require('dap').run_last() end,                                             desc = 'Debug run last' },
+            { '<leader>dt', function() require('dap').terminate() end,                                            desc = '[d]ebug [t]erminate' },
+            { '<F10>',      function() require('dap').step_over() end,                                            desc = 'Debug step over' },
+            { '<F11>',      function() require('dap').step_into() end,                                            desc = 'Debug step into' },
+            { '<S-F11>',    function() require('dap').step_out() end,                                             desc = 'Debug step out' },
+            { '<leader>do', function() require('dap').repl.open() end,                                            desc = 'Debug [o]pen repl' },
+            { '<leader>du', function() require('dapui').toggle() end,                                             desc = 'Debug toggle [u]i' },
+        }
+    },
+    {
+        "github/copilot.vim",
+        config = function()
+            vim.g.copilot_no_tab_map = true
+            vim.keymap.set('i', '<C-0>', 'copilot#Accept("<CR>")', { expr = true, silent = true, replace_keycodes = false })
+        end
+    },
+    {
+        "nvim-neotest/neotest",
+        dependencies = {
+            "nvim-neotest/nvim-nio",
+            "nvim-lua/plenary.nvim",
+            "antoinemadec/FixCursorHold.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            'Issafalcon/neotest-dotnet',
+        },
+        opts = function()
+            return {
+                adapters = {
+                    require('neotest-dotnet'),
+                }
+            }
+        end,
+        keys = {
+            {
+                '<leader>tu',
+                function()
+                    local nt = require('neotest')
+                    nt.summary.toggle()
+                    nt.output_panel.toggle()
+                end,
+                desc = '[t]oggle [t]est view'
+            },
+            { '<leader>tr', function()
+                local nt = require('neotest')
+                nt.output_panel.open()
+                nt.run.run()
+            end, '[t]est [r]un current method' },
+            { '<leader>td', function()
+                local nt = require('neotest')
+                nt.output_panel.close()
+                nt.run.run({ strategy = 'dap' })
+            end, '[t]est [d]ebug current method' },
+        }
+    }
+})
+
+
 
 local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
@@ -417,8 +387,6 @@ map('<F12>', function()
 end, 'Load configuration again')
 
 -- Generic
-map('<leader>n', '<cmd>nohlsearch<cr>', '[n]o highlight search')
-
 map('<leader>tsc', function()
     if vim.wo.spell then
         vim.wo.spell = false
@@ -444,123 +412,5 @@ map('<leader>tsw', function()
     vim.cmd('set wrap!')
     vim.notify('Enable text soft wrap')
 end, '[t]oggle [s]oft [w]rap')
-
--- Telescope
-map('<leader>ff', require('telescope.builtin').find_files, '[f]ind [f]iles')
-map('<leader>fk', require('telescope.builtin').keymaps, '[f]ind [k]eys')
-map('<leader>fe', function()
-    require('telescope').extensions.file_browser.file_browser({
-        path = '%:p:h<cr>',
-    })
-end, 'Browse [F]iles [E]xplore around current one')
-map(
-    '<leader>fc',
-    require('telescope').extensions.file_browser.file_browser,
-    'Browse [f]iles in [c]urrent working directory'
-)
-map('<leader>fb', require('telescope.builtin').buffers, '[f]ind [b]uffer')
-map('<leader>fg', require('telescope.builtin').live_grep, '[f]ind with [g]rep')
-map('<leader>sf', require('telescope.builtin').filetypes, '[s]elect [f]iletype')
-map(
-    '<leader>sc',
-    require('telescope').extensions.compiler.compiler,
-    '[s]elect [c]ompiler'
-)
-map(
-    '<leader>ss',
-    require('telescope.builtin').spell_suggest,
-    '[s]pell [s]uggests'
-)
-map('<leader>gb', require('telescope.builtin').git_branches, '[g]it [b]ranches')
-map('<leader>gs', require('telescope.builtin').git_status, '[g]it [s]tatus')
-map(
-    '<leader>ws',
-    require('telescope.builtin').lsp_dynamic_workspace_symbols,
-    'Browse [w]orkspace [s]ymbols'
-)
-
--- LSP
-map('<leader>lr', vim.lsp.buf.rename, '[l]SP [r]ename')
-map('<leader>lf', vim.lsp.buf.format, '[l]SP [f]ormat')
-map(
-    '<leader>ll',
-    vim.diagnostic.setloclist,
-    'Put [l]sp diagnostics to [l]ocation list'
-)
-map('<leader>l<del>', function()
-    vim.cmd('LspStop')
-    vim.diagnostic.reset()
-    vim.notify('Detached LSP servers')
-end, '[de]tach [l]sp server')
-
--- DAP
-map(
-    '<leader>db',
-    require('dap').toggle_breakpoint,
-    'Toggle [d]ebug [b]reakpoint'
-)
-map('<leader>dc', function()
-    require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))
-end, 'Toggle [d]ebug breakpoint wiht [c]ondition')
-
-map('<F5>', require('dap').continue, 'Debug continue')
-map('<F6>', require('dap').run_last, 'Debug run last')
-map('<leader>dt', require('dap').terminate, '[d]ebug [t]erminate')
-map('<F10>', require('dap').step_over, 'Debug step over')
-map('<F11>', require('dap').step_into, 'Debug step into')
-map('<S-F11>', require('dap').step_out, 'Debug step out')
-
-map('<leader>do', require('dap').repl.open, 'Debug [o]pen repl')
-map('<leader>du', require('dapui').toggle, 'Debug toggle [u]i')
-
--- Neotest
-map('<leader>tu', function()
-    local nt = require('neotest')
-    nt.summary.toggle()
-    nt.output_panel.toggle()
-end, '[t]oggle [t]est view')
-map('<leader>tr', function()
-    local nt = require('neotest')
-    nt.output_panel.open()
-    nt.run.run()
-end, '[t]est [r]un current method')
-map('<leader>td', function()
-    local nt = require('neotest')
-    nt.output_panel.close()
-    nt.run.run({ strategy = 'dap' })
-end, '[t]est [d]ebug current method')
-
--- Quickfix list
-map('<leader>cn', '<cmd>cnext<cr>', 'Select [n]ext item in the quickfix list')
-map(
-    '<leader>cp',
-    '<cmd>cprev<cr>',
-    'Select [p]revious item in the quickfix list'
-)
-map('<leader>co', '<cmd>copen<cr>', '[o]pen the quickfix list')
-map('<leader>cc', '<cmd>cclose<cr>', '[c]lose the quickfix list')
-
--- Location list
-map('<leader>ln', '<cmd>lnext<cr>', 'Select [n]ext item in the [l]ocal list')
-map(
-    '<leader>lp',
-    '<cmd>lprev<cr>',
-    'Select [p]revious item in the [l]ocal list'
-)
-map('<leader>lo', '<cmd>lopen<cr>', '[o]pen the [l]ocal list')
-map('<leader>lc', '<cmd>lclose<cr>', '[c]lose the [l]ocal list')
-
--- Diff
-map('<leader>dw', '<cmd>Gwrite<cr>', '[d]iff [w]rite')
-map(
-    '<leader>dl',
-    '<cmd>diffget //2 | diffupdate<cr>',
-    'Select for [d]iff from [l]eft column'
-)
-map(
-    '<leader>dr',
-    '<cmd>diffget //3 | diffupdate<cr>',
-    'Select for [d]iff from [r]ight column'
-)
 
 require('dotnet-tools').setup()
