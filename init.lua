@@ -13,6 +13,7 @@ vim.opt.title = true
 vim.opt.scrolloff = 8
 vim.g.syntax_on = true
 vim.cmd('filetype plugin indent on')
+vim.opt.spell = true
 
 -- Seraching
 vim.opt.grepprg = 'rg --vimgrep --smart-case --no-heading'
