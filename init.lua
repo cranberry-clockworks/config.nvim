@@ -38,10 +38,10 @@ vim.opt.signcolumn = 'yes'
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '‚ñ∑ ',
-    trail = '¬∑',
-    precedes = '¬´',
-    extends = '¬ª',
+    tab = '▷ ',
+    trail = '·',
+    precedes = '«',
+    extends = '»',
 }
 
 -- Encoding and endings
@@ -152,7 +152,6 @@ require("lazy").setup({
                 file_browser = {
                     previewer = false,
                     theme = 'ivy',
-                    dir_icon = '‚ñ†',
                     grouped = true,
                     hidden = true,
                 },
@@ -268,9 +267,9 @@ require("lazy").setup({
             local ui = require('dapui')
             ui.setup({
                 icons = {
-                    expanded = '‚ñæ',
-                    collapsed = '‚ñ∏',
-                    current_frame = '‚Üí',
+                    expanded = '▾',
+                    collapsed = '▸',
+                    current_frame = '→',
                 },
                 controls = {
                     enabled = false,
