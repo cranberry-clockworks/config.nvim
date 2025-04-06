@@ -253,6 +253,13 @@ require("lazy").setup({
                         }
                     })
                 end,
+                ["beancount"] = function()
+                    lspconfig.beancount.setup({
+                        root_dir = function(fname)
+                            return vim.fs.dirname(vim.fs.find('main.bean', { path = fname, upward = true })[1])
+                        end,
+                    })
+                end,
             })
             vim.diagnostic.config({ virtual_text = true, })
         end
@@ -374,7 +381,8 @@ require("lazy").setup({
     }
 })
 
-
+vim.filetype.add({
+})
 
 local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
