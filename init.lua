@@ -13,7 +13,6 @@ vim.opt.title = true
 vim.opt.scrolloff = 8
 vim.g.syntax_on = true
 vim.cmd('filetype plugin indent on')
-vim.opt.spell = true
 
 -- Seraching
 vim.opt.grepprg = 'rg --vimgrep --smart-case --no-heading'
@@ -39,10 +38,10 @@ vim.opt.signcolumn = 'yes'
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '▷ ',
-    trail = '·',
-    precedes = '«',
-    extends = '»',
+    tab = '‚ñ∑ ',
+    trail = '¬∑',
+    precedes = '¬´',
+    extends = '¬ª',
 }
 
 -- Encoding and endings
@@ -221,7 +220,6 @@ require("lazy").setup({
         "neovim/nvim-lspconfig",
         dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp' },
         keys = {
-            { '<leader>lr', function() vim.lsp.buf.rename() end,        desc = '[l]SP [r]ename' },
             { '<leader>lf', function() vim.lsp.buf.format() end,        desc = '[l]SP [f]ormat' },
             { '<leader>ll', function() vim.diagnostic.setloclist() end, desc = 'Put [l]sp diagnostics to [l]ocation list' },
             {
@@ -233,6 +231,9 @@ require("lazy").setup({
                 end,
                 desc = '[de]tach [l]sp server'
             },
+            { 'grd', function() vim.lsp.buf.definition() end, desc = '[G]o to [d]efiniton' },
+            { 'grD', function() vim.lsp.buf.declaration() end, desc = '[G]o to [d]efiniton' },
+            { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
         },
         config = function()
             local capabilities = require('blink.cmp').get_lsp_capabilities()
@@ -275,9 +276,9 @@ require("lazy").setup({
             local ui = require('dapui')
             ui.setup({
                 icons = {
-                    expanded = '▾',
-                    collapsed = '▸',
-                    current_frame = '→',
+                    expanded = '‚ñæ',
+                    collapsed = '‚ñ∏',
+                    current_frame = '‚Üí',
                 },
                 controls = {
                     enabled = false,
@@ -295,8 +296,10 @@ require("lazy").setup({
             end
 
             dap.adapters.coreclr = {
+                -- To debug on mac, you need to use custom compiled debugger for arm64:
+                -- https://github.com/Cliffback/netcoredbg-macOS-arm64.nvim/releases
+                command = vim.fn.expand(vim.fs.joinpath(vim.fn.stdpath("data"), "netcoredbg", "netcoredbg")),
                 type = 'executable',
-                command = 'netcoredbg',
                 args = { '--interpreter=vscode' },
             }
 
@@ -316,8 +319,11 @@ require("lazy").setup({
                         )
                     end,
                     args = function()
-                        return {}
+                        return { }
                     end,
+                    env = {
+                        ASPNETCORE_ENVIRONMENT = 'Development',
+                    }
                 },
             }
         end,
