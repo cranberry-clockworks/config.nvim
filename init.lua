@@ -189,7 +189,13 @@ require("lazy").setup({
     {
         "williamboman/mason.nvim",
         build = ":MasonUpdate",
-        config = true
+        config = true,
+        opts = {
+            registries = {
+                "github:mason-org/mason-registry",
+                "github:Crashdummyy/mason-registry",
+            },
+        }
     },
     {
         "williamboman/mason-lspconfig.nvim",
@@ -217,6 +223,13 @@ require("lazy").setup({
         opts_extend = { "sources.default" }
     },
     {
+        "seblyng/roslyn.nvim",
+        ft = "cs",
+        opts = {
+            config = {},
+        }
+    },
+    {
         "neovim/nvim-lspconfig",
         dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp' },
         keys = {
@@ -231,8 +244,8 @@ require("lazy").setup({
                 end,
                 desc = '[de]tach [l]sp server'
             },
-            { 'grd', function() vim.lsp.buf.definition() end, desc = '[G]o to [d]efiniton' },
-            { 'grD', function() vim.lsp.buf.declaration() end, desc = '[G]o to [d]efiniton' },
+            { 'grd', function() vim.lsp.buf.definition() end,     desc = '[G]o to [d]efiniton' },
+            { 'grD', function() vim.lsp.buf.declaration() end,    desc = '[G]o to [d]efiniton' },
             { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
         },
         config = function()
@@ -306,7 +319,7 @@ require("lazy").setup({
             dap.configurations.cs = {
                 {
                     type = 'coreclr',
-                    name = 'Launch netcoredbg',
+                    name = 'netcoredbg',
                     request = 'launch',
                     program = function()
                         local d = require('dotnet-tools')
@@ -319,7 +332,7 @@ require("lazy").setup({
                         )
                     end,
                     args = function()
-                        return { }
+                        return {}
                     end,
                     env = {
                         ASPNETCORE_ENVIRONMENT = 'Development',
@@ -344,7 +357,8 @@ require("lazy").setup({
         "github/copilot.vim",
         config = function()
             vim.g.copilot_no_tab_map = true
-            vim.keymap.set('i', '<C-0>', 'copilot#Accept("<CR>")', { expr = true, silent = true, replace_keycodes = false })
+            vim.keymap.set('i', '<C-0>', 'copilot#Accept("<CR>")',
+                { expr = true, silent = true, replace_keycodes = false })
         end
     },
     {
@@ -359,7 +373,12 @@ require("lazy").setup({
         opts = function()
             return {
                 adapters = {
-                    require('neotest-dotnet'),
+                    require("neotest-dotnet")({
+                        dap = {
+                            args = { justMyCode = false },
+                            adapter_name = "coreclr"
+                        },
+                    })
                 }
             }
         end,
@@ -426,5 +445,20 @@ map('<leader>tsw', function()
     vim.cmd('set wrap!')
     vim.notify('Enable text soft wrap')
 end, '[t]oggle [s]oft [w]rap')
+
+vim.api.nvim_create_autocmd({ "InsertLeave" }, {
+    pattern = "*",
+    callback = function()
+        local clients = vim.lsp.get_clients({ name = "roslyn" })
+        if not clients or #clients == 0 then
+            return
+        end
+
+        local buffers = vim.lsp.get_buffers_by_client_id(clients[1].id)
+        for _, buf in ipairs(buffers) do
+            vim.lsp.util._refresh("textDocument/diagnostic", { bufnr = buf })
+        end
+    end,
+})
 
 require('dotnet-tools').setup()
