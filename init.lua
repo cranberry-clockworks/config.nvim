@@ -76,6 +76,14 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
+        'savq/melange-nvim',
+        lazy = false, -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other start plugins
+        config = function()
+            vim.cmd('colorscheme melange')
+        end,
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         opts = {
@@ -207,6 +215,11 @@ require("lazy").setup({
         },
     },
     {
+        "L3MON4D3/LuaSnip",
+        version = "v2.*",
+        build = "make install_jsregexp"
+    },
+    {
         'saghen/blink.cmp',
         dependencies = { 'rafamadriz/friendly-snippets' },
 
@@ -223,11 +236,50 @@ require("lazy").setup({
         opts_extend = { "sources.default" }
     },
     {
-        "seblyng/roslyn.nvim",
-        ft = "cs",
-        opts = {
-            config = {},
-        }
+        'seblyng/roslyn.nvim',
+        ft = { 'cs' },
+        -- dependencies = {
+        --     {
+        --         'tris203/rzls.nvim',
+        --         config = function()
+        --             ---@diagnostic disable-next-line: missing-fields
+        --             require('rzls').setup {}
+        --         end,
+        --     },
+        -- },
+        config = function()
+            require('roslyn').setup {
+            --     args = {
+            --         '--stdio',
+            --         '--logLevel=Information',
+            --         '--extensionLogDirectory=' .. vim.fs.dirname(vim.lsp.get_log_path()),
+            --         '--razorSourceGenerator='
+            --         .. vim.fs.joinpath(vim.fn.stdpath 'data' --[[@as string]], 'mason', 'packages', 'roslyn', 'libexec', 'Microsoft.CodeAnalysis.Razor.Compiler.dll'),
+            --         '--razorDesignTimePath=' .. vim.fs.joinpath(
+            --             vim.fn.stdpath 'data' --[[@as string]],
+            --             'mason',
+            --             'packages',
+            --             'rzls',
+            --             'libexec',
+            --             'Targets',
+            --             'Microsoft.NET.Sdk.Razor.DesignTime.targets'
+            --         ),
+            --     },
+            --     ---@diagnostic disable-next-line: missing-fields
+                config = {
+                    -- handlers = require 'rzls.roslyn_handlers',
+                },
+            }
+        end,
+        -- init = function()
+        --     -- we add the razor filetypes before the plugin loads
+        --     vim.filetype.add {
+        --         extension = {
+        --             razor = 'razor',
+        --             cshtml = 'razor',
+        --         },
+        --     }
+        -- end,
     },
     {
         "neovim/nvim-lspconfig",
@@ -244,8 +296,8 @@ require("lazy").setup({
                 end,
                 desc = '[de]tach [l]sp server'
             },
-            { 'grd', function() vim.lsp.buf.definition() end,     desc = '[G]o to [d]efiniton' },
-            { 'grD', function() vim.lsp.buf.declaration() end,    desc = '[G]o to [d]efiniton' },
+            { 'grd', function() vim.lsp.buf.definition() end, desc = '[G]o to [d]efiniton' },
+            { 'grD', function() vim.lsp.buf.declaration() end, desc = '[G]o to [d]efiniton' },
             { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
         },
         config = function()
@@ -332,7 +384,7 @@ require("lazy").setup({
                         )
                     end,
                     args = function()
-                        return {}
+                        return { }
                     end,
                     env = {
                         ASPNETCORE_ENVIRONMENT = 'Development',
