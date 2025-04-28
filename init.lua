@@ -56,6 +56,10 @@ vim.g.netrw_list_hide = '^\\./$'
 
 -- Keymaps
 vim.g.mapleader = ' '
+vim.opt.langmap = {
+  "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  "фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz",
+}
 
 -- Lazy bootstrap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -322,7 +326,7 @@ require("lazy").setup({
                 ["beancount"] = function()
                     lspconfig.beancount.setup({
                         root_dir = function(fname)
-                            return vim.fs.dirname(vim.fs.find('main.bean', { path = fname, upward = true })[1])
+                            return vim.fs.dirname(vim.fs.find('main.beancount', { path = fname, upward = true })[1])
                         end,
                     })
                 end,
@@ -514,3 +518,4 @@ vim.api.nvim_create_autocmd({ "InsertLeave" }, {
 })
 
 require('dotnet-tools').setup()
+
