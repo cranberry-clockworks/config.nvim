@@ -520,6 +520,7 @@ vim.api.nvim_create_autocmd({ "InsertLeave" }, {
     end,
 })
 
+-- Override default LSP formatting for C# to use csharpier
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "cs",
   callback = function()
