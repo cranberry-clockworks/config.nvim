@@ -98,6 +98,9 @@ require("lazy").setup({
         }
     },
     {
+        "nvim-treesitter/nvim-treesitter-context",
+    },
+    {
         "tpope/vim-fugitive",
         cmd = { "G", "Git", "Gdiffsplit", "Gblame", "Gpush", "Gpull" },
         keys = {
