@@ -520,5 +520,30 @@ vim.api.nvim_create_autocmd({ "InsertLeave" }, {
     end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "cs",
+  callback = function()
+    -- Format entire buffer
+    vim.keymap.set('n', '<leader>lf',
+      '<cmd>!dotnet csharpier %<CR>',
+      { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
+
+    -- Format visual selection
+    vim.keymap.set('x', '<leader>lf', function()
+      local start = vim.fn.line("'<")
+      local finish = vim.fn.line("'>")
+      local lines = vim.api.nvim_buf_get_lines(0, start-1, finish, false)
+      -- pipe selection into csharpier, capture stdout
+      local fmt = vim.fn.systemlist({'dotnet-csharpier', '--write-stdout'}, lines)
+      if vim.v.shell_error ~= 0 then
+        vim.api.nvim_echo({{'csharpier failed', 'ErrorMsg'}}, false, {})
+        return
+      end
+      -- replace the original selection with formatted output
+      vim.api.nvim_buf_set_lines(0, start-1, finish, false, fmt)
+    end, { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
+  end,
+})
+
 require('dotnet-tools').setup()
 
