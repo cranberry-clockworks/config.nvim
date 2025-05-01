@@ -1,18 +1,26 @@
 -- Essentials
 vim.cmd('language en_GB')
-vim.g.bulitin_lsp = true
 
 -- Behaviours
 vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect', 'popup' }
 vim.o.pumheight = 15
-vim.opt.hidden = true
+
+
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
 vim.opt.wrap = false
 vim.opt.title = true
+vim.opt.breakindent = true
 vim.opt.scrolloff = 8
-vim.g.syntax_on = true
-vim.cmd('filetype plugin indent on')
+vim.opt.mouse = 'a'
+vim.schedule(function()
+    vim.opt.clipboard = 'unnamedplus'
+end)
+
+-- Decrease update times
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 300
 
 -- Seraching
 vim.opt.grepprg = 'rg --vimgrep --smart-case --no-heading'
@@ -20,10 +28,10 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.incsearch = true
 vim.opt.hlsearch = true
+vim.opt.inccommand = 'split'
 
 -- Indentation
 vim.opt.expandtab = true
-vim.opt.smarttab = true
 vim.opt.autoindent = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -34,6 +42,8 @@ vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
+vim.opt.cursorline = true
+vim.g.have_nerd_font = false
 
 -- Show invisibles
 vim.opt.list = true
@@ -44,11 +54,6 @@ vim.opt.listchars = {
     extends = '»',
 }
 
--- Encoding and endings
-vim.opt.encoding = 'utf-8'
-vim.opt.bomb = false
-vim.opt.ffs = { 'unix', 'dos' }
-
 -- Netrw
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = 'noma nomod nonu nobl nowrap ro nu rnu'
@@ -56,9 +61,10 @@ vim.g.netrw_list_hide = '^\\./$'
 
 -- Keymaps
 vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 vim.opt.langmap = {
-  "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-  "фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz",
+    "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz",
 }
 
 -- Lazy bootstrap
@@ -81,7 +87,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     {
         'savq/melange-nvim',
-        lazy = false, -- make sure we load this during startup if it is your main colorscheme
+        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             vim.cmd('colorscheme melange')
@@ -233,12 +239,12 @@ require("lazy").setup({
         version = '1.*',
         opts = {
             keymap = { preset = 'default' },
-
             appearance = {
                 nerd_font_variant = 'mono'
             },
-
             completion = { documentation = { auto_show = false } },
+            snippets = { preset = 'luasnip' },
+            signature = { enabled = true },
         },
         opts_extend = { "sources.default" }
     },
@@ -256,23 +262,23 @@ require("lazy").setup({
         -- },
         config = function()
             require('roslyn').setup {
-            --     args = {
-            --         '--stdio',
-            --         '--logLevel=Information',
-            --         '--extensionLogDirectory=' .. vim.fs.dirname(vim.lsp.get_log_path()),
-            --         '--razorSourceGenerator='
-            --         .. vim.fs.joinpath(vim.fn.stdpath 'data' --[[@as string]], 'mason', 'packages', 'roslyn', 'libexec', 'Microsoft.CodeAnalysis.Razor.Compiler.dll'),
-            --         '--razorDesignTimePath=' .. vim.fs.joinpath(
-            --             vim.fn.stdpath 'data' --[[@as string]],
-            --             'mason',
-            --             'packages',
-            --             'rzls',
-            --             'libexec',
-            --             'Targets',
-            --             'Microsoft.NET.Sdk.Razor.DesignTime.targets'
-            --         ),
-            --     },
-            --     ---@diagnostic disable-next-line: missing-fields
+                --     args = {
+                --         '--stdio',
+                --         '--logLevel=Information',
+                --         '--extensionLogDirectory=' .. vim.fs.dirname(vim.lsp.get_log_path()),
+                --         '--razorSourceGenerator='
+                --         .. vim.fs.joinpath(vim.fn.stdpath 'data' --[[@as string]], 'mason', 'packages', 'roslyn', 'libexec', 'Microsoft.CodeAnalysis.Razor.Compiler.dll'),
+                --         '--razorDesignTimePath=' .. vim.fs.joinpath(
+                --             vim.fn.stdpath 'data' --[[@as string]],
+                --             'mason',
+                --             'packages',
+                --             'rzls',
+                --             'libexec',
+                --             'Targets',
+                --             'Microsoft.NET.Sdk.Razor.DesignTime.targets'
+                --         ),
+                --     },
+                --     ---@diagnostic disable-next-line: missing-fields
                 config = {
                     -- handlers = require 'rzls.roslyn_handlers',
                 },
@@ -290,7 +296,7 @@ require("lazy").setup({
     },
     {
         "neovim/nvim-lspconfig",
-        dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp' },
+        dependencies = { "mason-lspconfig.nvim", 'saghen/blink.cmp', { 'j-hui/fidget.nvim', opts = {} } },
         keys = {
             { '<leader>lf', function() vim.lsp.buf.format() end,        desc = '[l]SP [f]ormat' },
             { '<leader>ll', function() vim.diagnostic.setloclist() end, desc = 'Put [l]sp diagnostics to [l]ocation list' },
@@ -303,8 +309,8 @@ require("lazy").setup({
                 end,
                 desc = '[de]tach [l]sp server'
             },
-            { 'grd', function() vim.lsp.buf.definition() end, desc = '[G]o to [d]efiniton' },
-            { 'grD', function() vim.lsp.buf.declaration() end, desc = '[G]o to [d]efiniton' },
+            { 'grd', function() vim.lsp.buf.definition() end,     desc = '[G]o to [d]efiniton' },
+            { 'grD', function() vim.lsp.buf.declaration() end,    desc = '[G]o to [d]efiniton' },
             { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
         },
         config = function()
@@ -328,6 +334,7 @@ require("lazy").setup({
                 end,
                 ["beancount"] = function()
                     lspconfig.beancount.setup({
+                        capabilities = capabilities,
                         root_dir = function(fname)
                             return vim.fs.dirname(vim.fs.find('main.beancount', { path = fname, upward = true })[1])
                         end,
@@ -391,7 +398,7 @@ require("lazy").setup({
                         )
                     end,
                     args = function()
-                        return { }
+                        return {}
                     end,
                     env = {
                         ASPNETCORE_ENVIRONMENT = 'Development',
@@ -472,11 +479,14 @@ local function map(key, action, description)
     vim.keymap.set('n', key, action, { desc = description })
 end
 
--- Reload configuration
-map('<F12>', function()
-    dofile(vim.env.MYVIMRC)
-    require('packer').sync()
-end, 'Load configuration again')
+-- Keymaps
+
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Generic
 map('<leader>tsc', function()
@@ -522,29 +532,28 @@ vim.api.nvim_create_autocmd({ "InsertLeave" }, {
 
 -- Override default LSP formatting for C# to use csharpier
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "cs",
-  callback = function()
-    -- Format entire buffer
-    vim.keymap.set('n', '<leader>lf',
-      '<cmd>!dotnet csharpier %<CR>',
-      { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
+    pattern = "cs",
+    callback = function()
+        -- Format entire buffer
+        vim.keymap.set('n', '<leader>lf',
+            '<cmd>!dotnet csharpier %<CR>',
+            { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
 
-    -- Format visual selection
-    vim.keymap.set('x', '<leader>lf', function()
-      local start = vim.fn.line("'<")
-      local finish = vim.fn.line("'>")
-      local lines = vim.api.nvim_buf_get_lines(0, start-1, finish, false)
-      -- pipe selection into csharpier, capture stdout
-      local fmt = vim.fn.systemlist({'dotnet-csharpier', '--write-stdout'}, lines)
-      if vim.v.shell_error ~= 0 then
-        vim.api.nvim_echo({{'csharpier failed', 'ErrorMsg'}}, false, {})
-        return
-      end
-      -- replace the original selection with formatted output
-      vim.api.nvim_buf_set_lines(0, start-1, finish, false, fmt)
-    end, { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
-  end,
+        -- Format visual selection
+        vim.keymap.set('x', '<leader>lf', function()
+            local start = vim.fn.line("'<")
+            local finish = vim.fn.line("'>")
+            local lines = vim.api.nvim_buf_get_lines(0, start - 1, finish, false)
+            -- pipe selection into csharpier, capture stdout
+            local fmt = vim.fn.systemlist({ 'dotnet-csharpier', '--write-stdout' }, lines)
+            if vim.v.shell_error ~= 0 then
+                vim.api.nvim_echo({ { 'csharpier failed', 'ErrorMsg' } }, false, {})
+                return
+            end
+            -- replace the original selection with formatted output
+            vim.api.nvim_buf_set_lines(0, start - 1, finish, false, fmt)
+        end, { buffer = true, desc = 'Override [L]SP for [F]ormat file with csharpier' })
+    end,
 })
 
 require('dotnet-tools').setup()
-
