@@ -14,9 +14,6 @@ vim.opt.title = true
 vim.opt.breakindent = true
 vim.opt.scrolloff = 8
 vim.opt.mouse = 'a'
-vim.schedule(function()
-    vim.opt.clipboard = 'unnamedplus'
-end)
 
 -- Decrease update times
 vim.opt.updatetime = 250
@@ -520,12 +517,18 @@ require("lazy").setup({
         }
     },
     {
-        "github/copilot.vim",
-        config = function()
-            vim.g.copilot_no_tab_map = true
-            vim.keymap.set('i', '<C-0>', 'copilot#Accept("<CR>")',
-                { expr = true, silent = true, replace_keycodes = false })
-        end
+        "zbirenbaum/copilot.lua",
+        opts = {
+            suggestion = {
+                keymap = {
+                    accept = "<C-0>",
+                    next = "<C-e>",
+                    dismiss = "<C-a>",
+                },
+            },
+            panel = { enabled = false },
+            copilot_model = "gpt-4o-copilot",
+        }
     },
     {
         "nvim-neotest/neotest",
