@@ -48,10 +48,10 @@ vim.g.have_nerd_font = false
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '▷ ',
-    trail = '·',
-    precedes = '«',
-    extends = '»',
+    tab = '‚ñ∑ ',
+    trail = '¬∑',
+    precedes = '¬´',
+    extends = '¬ª',
 }
 
 -- Netrw
@@ -63,8 +63,8 @@ vim.g.netrw_list_hide = '^\\./$'
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.langmap = {
-    "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    "фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz",
+    "–§–ò–°–í–£–ê–ü–†–®–û–õ–î–¨–¢–©–ó–ô–ö–´–ï–ì–ú–¶–ß–ù–Ø;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "—Ñ–∏—Å–≤—É–∞–ø—Ä—à–æ–ª–¥—å—Ç—â–∑–π–∫—ã–µ–≥–º—Ü—á–Ω—è;abcdefghijklmnopqrstuvwxyz",
 }
 
 -- Lazy bootstrap
@@ -237,15 +237,74 @@ require("lazy").setup({
         dependencies = { 'rafamadriz/friendly-snippets' },
 
         version = '1.*',
-        opts = {
-            keymap = { preset = 'default' },
-            appearance = {
-                nerd_font_variant = 'mono'
-            },
-            completion = { documentation = { auto_show = false } },
-            snippets = { preset = 'luasnip' },
-            signature = { enabled = true },
-        },
+        config = function()
+            local kind_icons = {
+                array         = { glyph = "[]",    hl = "CmpItemKindTypeParameter" },
+                boolean       = { glyph = "‚ä®",     hl = "CmpItemKindTypeParameter" },
+                class         = { glyph = "C",     hl = "CmpItemKindClass" },
+                color         = { glyph = "‚óà",     hl = "CmpItemKindColor" },
+                constant      = { glyph = "Œ©",     hl = "CmpItemKindConstant" },
+                constructor   = { glyph = "‚àü",     hl = "CmpItemKindConstructor" },
+                enum          = { glyph = "E",     hl = "CmpItemKindEnum" },
+                enummember    = { glyph = "‚àã",     hl = "CmpItemKindEnumMember" },
+                event         = { glyph = "!",     hl = "CmpItemKindEvent" },
+                field         = { glyph = "f",     hl = "CmpItemKindField" },
+                file          = { glyph = "¬∂",     hl = "CmpItemKindFile" },
+                folder        = { glyph = "‚ñ∏",     hl = "CmpItemKindFolder" },
+                ["function"]  = { glyph = "Œª",     hl = "CmpItemKindFunction" },
+                interface     = { glyph = "I",     hl = "CmpItemKindInterface" },
+                key           = { glyph = "‚Ü¶",     hl = "CmpItemKindProperty" },
+                keyword       = { glyph = "‚àÄ",     hl = "CmpItemKindKeyword" },
+                method        = { glyph = "m",     hl = "CmpItemKindMethod" },
+                module        = { glyph = "M",     hl = "CmpItemKindModule" },
+                namespace     = { glyph = "N",     hl = "CmpItemKindModule" },
+                null          = { glyph = "√∏",     hl = "CmpItemKindConstant" },
+                number        = { glyph = "#",     hl = "CmpItemKindConstant" },
+                object        = { glyph = "{}",    hl = "CmpItemKindVariable" },
+                operator      = { glyph = "‚äï",     hl = "CmpItemKindOperator" },
+                package       = { glyph = "‚äû",     hl = "CmpItemKindModule" },
+                parameter     = { glyph = "p",     hl = "CmpItemKindParameter" },
+                property      = { glyph = ".",     hl = "CmpItemKindProperty" },
+                reference     = { glyph = "‚Üí",     hl = "CmpItemKindReference" },
+                snippet       = { glyph = "‚Ä¶",     hl = "CmpItemKindSnippet" },
+                string        = { glyph = '‚Äú‚Äù',    hl = "CmpItemKindString" },
+                struct        = { glyph = "S",     hl = "CmpItemKindStruct" },
+                text          = { glyph = "T",     hl = "CmpItemKindText" },
+                typeparameter = { glyph = "t",     hl = "CmpItemKindTypeParameter" },
+                unit          = { glyph = "U",     hl = "CmpItemKindUnit" },
+                value         = { glyph = "V",     hl = "CmpItemKindValue" },
+                variable      = { glyph = "v",     hl = "CmpItemKindVariable" },
+            }
+
+            require('blink.cmp').setup(
+                {
+                    keymap = { preset = 'default' },
+                    appearance = {
+                        nerd_font_variant = 'mono'
+                    },
+                    completion = {
+                        documentation = { auto_show = false },
+                        menu = {
+                            draw = {
+                                components = {
+                                    kind_icon = {
+                                        text = function(ctx)
+                                            local kind = ctx.kind:lower()
+                                            return (kind_icons[kind] or {}).glyph .. ctx.icon_gap
+                                        end,
+                                        highlight = function(ctx)
+                                            local kind = ctx.kind:lower()
+                                            return (kind_icons[kind] or {}).hl or "CmpItemKindText"
+                                        end,
+                                    },
+                                }
+                            }
+                        }
+                    },
+                    signature = { enabled = true },
+                }
+            )
+        end,
         opts_extend = { "sources.default" }
     },
     {
@@ -314,16 +373,10 @@ require("lazy").setup({
             { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
         },
         config = function()
-            local capabilities = require('blink.cmp').get_lsp_capabilities()
-
             local lspconfig = require("lspconfig")
             require("mason-lspconfig").setup_handlers({
-                function(server_name)
-                    lspconfig[server_name].setup({ capabilities = capabilities })
-                end,
                 ["lua_ls"] = function()
                     lspconfig.lua_ls.setup({
-                        capabilities = capabilities,
                         settings = {
                             Lua = {
                                 diagnostics = { globals = { "vim" } },
@@ -334,7 +387,6 @@ require("lazy").setup({
                 end,
                 ["beancount"] = function()
                     lspconfig.beancount.setup({
-                        capabilities = capabilities,
                         root_dir = function(fname)
                             return vim.fs.dirname(vim.fs.find('main.beancount', { path = fname, upward = true })[1])
                         end,
@@ -355,9 +407,9 @@ require("lazy").setup({
             local ui = require('dapui')
             ui.setup({
                 icons = {
-                    expanded = '▾',
-                    collapsed = '▸',
-                    current_frame = '→',
+                    expanded = '‚ñæ',
+                    collapsed = '‚ñ∏',
+                    current_frame = '‚Üí',
                 },
                 controls = {
                     enabled = false,
@@ -482,11 +534,6 @@ end
 -- Keymaps
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Generic
 map('<leader>tsc', function()
