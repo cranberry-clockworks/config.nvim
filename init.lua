@@ -48,25 +48,21 @@ vim.g.have_nerd_font = false
 -- Show invisibles
 vim.opt.list = true
 vim.opt.listchars = {
-    tab = '‚ñ∑ ',
-    trail = '¬∑',
-    precedes = '¬´',
-    extends = '¬ª',
+    tab = '▷ ',
+    trail = '·',
+    precedes = '«',
+    extends = '»',
 }
-
 -- Netrw
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = 'noma nomod nonu nobl nowrap ro nu rnu'
 vim.g.netrw_list_hide = '^\\./$'
 
-
 -- Keymaps
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.opt.langmap = {
-    "–§–ò–°–í–£–ê–ü–†–®–û–õ–î–¨–¢–©–ó–ô–ö–´–ï–ì–ú–¶–ß–ù–Ø;ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    "—Ñ–∏—Å–≤—É–∞–ø—Ä—à–æ–ª–¥—å—Ç—â–∑–π–∫—ã–µ–≥–º—Ü—á–Ω—è;abcdefghijklmnopqrstuvwxyz",
-}
+
+
 
 -- Lazy bootstrap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -289,40 +285,40 @@ require("lazy").setup({
         version = '1.*',
         config = function()
             local kind_icons = {
-                array         = { glyph = "[]", hl = "CmpItemKindTypeParameter" },
-                boolean       = { glyph = "‚ä®", hl = "CmpItemKindTypeParameter" },
-                class         = { glyph = "C", hl = "CmpItemKindClass" },
-                color         = { glyph = "‚óà", hl = "CmpItemKindColor" },
-                constant      = { glyph = "Œ©", hl = "CmpItemKindConstant" },
-                constructor   = { glyph = "‚àü", hl = "CmpItemKindConstructor" },
-                enum          = { glyph = "E", hl = "CmpItemKindEnum" },
-                enummember    = { glyph = "‚àã", hl = "CmpItemKindEnumMember" },
-                event         = { glyph = "!", hl = "CmpItemKindEvent" },
-                field         = { glyph = "f", hl = "CmpItemKindField" },
-                file          = { glyph = "¬∂", hl = "CmpItemKindFile" },
-                folder        = { glyph = "‚ñ∏", hl = "CmpItemKindFolder" },
-                ["function"]  = { glyph = "Œª", hl = "CmpItemKindFunction" },
-                interface     = { glyph = "I", hl = "CmpItemKindInterface" },
-                key           = { glyph = "‚Ü¶", hl = "CmpItemKindProperty" },
-                keyword       = { glyph = "‚àÄ", hl = "CmpItemKindKeyword" },
-                method        = { glyph = "m", hl = "CmpItemKindMethod" },
-                module        = { glyph = "M", hl = "CmpItemKindModule" },
-                namespace     = { glyph = "N", hl = "CmpItemKindModule" },
-                null          = { glyph = "√∏", hl = "CmpItemKindConstant" },
+                array         = { glyph = "∥", hl = "CmpItemKindTypeParameter" },
+                boolean       = { glyph = "⊤", hl = "CmpItemKindTypeParameter" },
+                class         = { glyph = "ℂ", hl = "CmpItemKindClass" },
+                color         = { glyph = "■", hl = "CmpItemKindColor" },
+                constant      = { glyph = "Ω", hl = "CmpItemKindConstant" },
+                constructor   = { glyph = "∇", hl = "CmpItemKindConstructor" },
+                enum          = { glyph = "Є", hl = "CmpItemKindEnum" },
+                enummember    = { glyph = "∈", hl = "CmpItemKindEnumMember" },
+                event         = { glyph = "★", hl = "CmpItemKindEvent" },
+                field         = { glyph = "⋗", hl = "CmpItemKindField" },
+                file          = { glyph = "▢", hl = "CmpItemKindFile" },
+                folder        = { glyph = "▣", hl = "CmpItemKindFolder" },
+                ["function"]  = { glyph = "λ", hl = "CmpItemKindFunction" },
+                interface     = { glyph = "⊡", hl = "CmpItemKindInterface" },
+                key           = { glyph = "✦", hl = "CmpItemKindProperty" },
+                keyword       = { glyph = "∀", hl = "CmpItemKindKeyword" },
+                method        = { glyph = "ƒ", hl = "CmpItemKindMethod" },
+                module        = { glyph = "ⓜ", hl = "CmpItemKindModule" },
+                namespace     = { glyph = "Ⓝ", hl = "CmpItemKindModule" },
+                null          = { glyph = "∅", hl = "CmpItemKindConstant" },
                 number        = { glyph = "#", hl = "CmpItemKindConstant" },
-                object        = { glyph = "{}", hl = "CmpItemKindVariable" },
-                operator      = { glyph = "‚äï", hl = "CmpItemKindOperator" },
-                package       = { glyph = "‚äû", hl = "CmpItemKindModule" },
-                parameter     = { glyph = "p", hl = "CmpItemKindParameter" },
-                property      = { glyph = ".", hl = "CmpItemKindProperty" },
-                reference     = { glyph = "‚Üí", hl = "CmpItemKindReference" },
-                snippet       = { glyph = "‚Ä¶", hl = "CmpItemKindSnippet" },
-                string        = { glyph = '‚Äú‚Äù', hl = "CmpItemKindString" },
-                struct        = { glyph = "S", hl = "CmpItemKindStruct" },
-                text          = { glyph = "T", hl = "CmpItemKindText" },
-                typeparameter = { glyph = "t", hl = "CmpItemKindTypeParameter" },
-                unit          = { glyph = "U", hl = "CmpItemKindUnit" },
-                value         = { glyph = "V", hl = "CmpItemKindValue" },
+                object        = { glyph = "⊖", hl = "CmpItemKindVariable" },
+                operator      = { glyph = "⊕", hl = "CmpItemKindOperator" },
+                package       = { glyph = "⊞", hl = "CmpItemKindModule" },
+                parameter     = { glyph = "ρ", hl = "CmpItemKindParameter" },
+                property      = { glyph = "π", hl = "CmpItemKindProperty" },
+                reference     = { glyph = "→", hl = "CmpItemKindReference" },
+                snippet       = { glyph = "…", hl = "CmpItemKindSnippet" },
+                string        = { glyph = "❝", hl = "CmpItemKindString" },
+                struct        = { glyph = "§", hl = "CmpItemKindStruct" },
+                text          = { glyph = "𝓣", hl = "CmpItemKindText" },
+                typeparameter = { glyph = "τ", hl = "CmpItemKindTypeParameter" },
+                unit          = { glyph = "µ", hl = "CmpItemKindUnit" },
+                value         = { glyph = "ν", hl = "CmpItemKindValue" },
                 variable      = { glyph = "v", hl = "CmpItemKindVariable" },
             }
 
@@ -458,9 +454,10 @@ require("lazy").setup({
             local ui = require('dapui')
             ui.setup({
                 icons = {
-                    expanded = '‚ñæ',
-                    collapsed = '‚ñ∏',
-                    current_frame = '‚Üí',
+                    expanded = '▾',
+                    collapsed = '▸',
+                    current_frame = '→',
+
                 },
                 controls = {
                     enabled = false,
