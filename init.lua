@@ -85,6 +85,46 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- helper to rename both symbol and file, then close the old buffer
+local function lsp_rename_and_file()
+    -- capture the current buffer so we can delete it later
+    local old_buf = vim.api.nvim_get_current_buf()
+    local old_name = vim.fn.expand('<cword>')
+
+    vim.ui.input({ prompt = 'New name: ', default = old_name }, function(new_name)
+        if not new_name or new_name == '' or new_name == old_name then
+            return
+        end
+
+        -- 1) Rename symbol via LSP
+        vim.lsp.buf.rename(new_name)
+
+        -- 2) Compute new file path (preserve extension)
+        local old_path = vim.fn.expand('%:p')
+        local ext      = vim.fn.expand('%:e')
+        local dir      = vim.fn.expand('%:p:h')
+        local new_path = string.format('%s/%s%s',
+            dir,
+            new_name,
+            (ext ~= '' and '.' .. ext or '')
+        )
+
+        -- 3) Rename the file on disk
+        local ok, err  = os.rename(old_path, new_path)
+        if not ok then
+            vim.notify('Error renaming file: ' .. err, vim.log.levels.ERROR)
+            return
+        end
+
+        -- 4) Open the newly renamed file
+        vim.cmd('edit ' .. vim.fn.fnameescape(new_path))
+
+        -- 5) Close the old buffer
+        --    force=true in case it's still listed or modified
+        vim.api.nvim_buf_delete(old_buf, { force = true })
+    end)
+end
+
 require("lazy").setup({
     {
         'savq/melange-nvim',
@@ -381,6 +421,7 @@ require("lazy").setup({
             { 'grd', function() vim.lsp.buf.definition() end,     desc = '[G]o to [d]efiniton' },
             { 'grD', function() vim.lsp.buf.declaration() end,    desc = '[G]o to [d]efiniton' },
             { 'gri', function() vim.lsp.buf.implementation() end, desc = '[G]o to [d]efiniton' },
+            { 'grf', lsp_rename_and_file, desc = 'LSP [R]ename symbol with the [F]ile name' }
         },
         config = function()
             local lspconfig = require("lspconfig")
