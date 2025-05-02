@@ -59,6 +59,7 @@ vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = 'noma nomod nonu nobl nowrap ro nu rnu'
 vim.g.netrw_list_hide = '^\\./$'
 
+
 -- Keymaps
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -160,17 +161,26 @@ require("lazy").setup({
             pickers = {
                 find_files = {
                     previewer = false,
+                    disable_devicons = true,
                 },
                 buffers = {
+                    disable_devicons = true,
                     previewer = false,
                     mappings = {
                         i = { ['<c-w>'] = 'delete_buffer' },
                         n = { ['<c-w>'] = 'delete_buffer' },
                     },
                 },
+                live_grep = {
+                    disable_devicons = true,
+                },
+                git_status = {
+                    disable_devicons = true,
+                },
             },
             extensions = {
                 file_browser = {
+                    disable_devicons = true,
                     previewer = false,
                     theme = 'ivy',
                     grouped = true,
@@ -239,41 +249,41 @@ require("lazy").setup({
         version = '1.*',
         config = function()
             local kind_icons = {
-                array         = { glyph = "[]",    hl = "CmpItemKindTypeParameter" },
-                boolean       = { glyph = "‚ä®",     hl = "CmpItemKindTypeParameter" },
-                class         = { glyph = "C",     hl = "CmpItemKindClass" },
-                color         = { glyph = "‚óà",     hl = "CmpItemKindColor" },
-                constant      = { glyph = "Œ©",     hl = "CmpItemKindConstant" },
-                constructor   = { glyph = "‚àü",     hl = "CmpItemKindConstructor" },
-                enum          = { glyph = "E",     hl = "CmpItemKindEnum" },
-                enummember    = { glyph = "‚àã",     hl = "CmpItemKindEnumMember" },
-                event         = { glyph = "!",     hl = "CmpItemKindEvent" },
-                field         = { glyph = "f",     hl = "CmpItemKindField" },
-                file          = { glyph = "¬∂",     hl = "CmpItemKindFile" },
-                folder        = { glyph = "‚ñ∏",     hl = "CmpItemKindFolder" },
-                ["function"]  = { glyph = "Œª",     hl = "CmpItemKindFunction" },
-                interface     = { glyph = "I",     hl = "CmpItemKindInterface" },
-                key           = { glyph = "‚Ü¶",     hl = "CmpItemKindProperty" },
-                keyword       = { glyph = "‚àÄ",     hl = "CmpItemKindKeyword" },
-                method        = { glyph = "m",     hl = "CmpItemKindMethod" },
-                module        = { glyph = "M",     hl = "CmpItemKindModule" },
-                namespace     = { glyph = "N",     hl = "CmpItemKindModule" },
-                null          = { glyph = "√∏",     hl = "CmpItemKindConstant" },
-                number        = { glyph = "#",     hl = "CmpItemKindConstant" },
-                object        = { glyph = "{}",    hl = "CmpItemKindVariable" },
-                operator      = { glyph = "‚äï",     hl = "CmpItemKindOperator" },
-                package       = { glyph = "‚äû",     hl = "CmpItemKindModule" },
-                parameter     = { glyph = "p",     hl = "CmpItemKindParameter" },
-                property      = { glyph = ".",     hl = "CmpItemKindProperty" },
-                reference     = { glyph = "‚Üí",     hl = "CmpItemKindReference" },
-                snippet       = { glyph = "‚Ä¶",     hl = "CmpItemKindSnippet" },
-                string        = { glyph = '‚Äú‚Äù',    hl = "CmpItemKindString" },
-                struct        = { glyph = "S",     hl = "CmpItemKindStruct" },
-                text          = { glyph = "T",     hl = "CmpItemKindText" },
-                typeparameter = { glyph = "t",     hl = "CmpItemKindTypeParameter" },
-                unit          = { glyph = "U",     hl = "CmpItemKindUnit" },
-                value         = { glyph = "V",     hl = "CmpItemKindValue" },
-                variable      = { glyph = "v",     hl = "CmpItemKindVariable" },
+                array         = { glyph = "[]", hl = "CmpItemKindTypeParameter" },
+                boolean       = { glyph = "‚ä®", hl = "CmpItemKindTypeParameter" },
+                class         = { glyph = "C", hl = "CmpItemKindClass" },
+                color         = { glyph = "‚óà", hl = "CmpItemKindColor" },
+                constant      = { glyph = "Œ©", hl = "CmpItemKindConstant" },
+                constructor   = { glyph = "‚àü", hl = "CmpItemKindConstructor" },
+                enum          = { glyph = "E", hl = "CmpItemKindEnum" },
+                enummember    = { glyph = "‚àã", hl = "CmpItemKindEnumMember" },
+                event         = { glyph = "!", hl = "CmpItemKindEvent" },
+                field         = { glyph = "f", hl = "CmpItemKindField" },
+                file          = { glyph = "¬∂", hl = "CmpItemKindFile" },
+                folder        = { glyph = "‚ñ∏", hl = "CmpItemKindFolder" },
+                ["function"]  = { glyph = "Œª", hl = "CmpItemKindFunction" },
+                interface     = { glyph = "I", hl = "CmpItemKindInterface" },
+                key           = { glyph = "‚Ü¶", hl = "CmpItemKindProperty" },
+                keyword       = { glyph = "‚àÄ", hl = "CmpItemKindKeyword" },
+                method        = { glyph = "m", hl = "CmpItemKindMethod" },
+                module        = { glyph = "M", hl = "CmpItemKindModule" },
+                namespace     = { glyph = "N", hl = "CmpItemKindModule" },
+                null          = { glyph = "√∏", hl = "CmpItemKindConstant" },
+                number        = { glyph = "#", hl = "CmpItemKindConstant" },
+                object        = { glyph = "{}", hl = "CmpItemKindVariable" },
+                operator      = { glyph = "‚äï", hl = "CmpItemKindOperator" },
+                package       = { glyph = "‚äû", hl = "CmpItemKindModule" },
+                parameter     = { glyph = "p", hl = "CmpItemKindParameter" },
+                property      = { glyph = ".", hl = "CmpItemKindProperty" },
+                reference     = { glyph = "‚Üí", hl = "CmpItemKindReference" },
+                snippet       = { glyph = "‚Ä¶", hl = "CmpItemKindSnippet" },
+                string        = { glyph = '‚Äú‚Äù', hl = "CmpItemKindString" },
+                struct        = { glyph = "S", hl = "CmpItemKindStruct" },
+                text          = { glyph = "T", hl = "CmpItemKindText" },
+                typeparameter = { glyph = "t", hl = "CmpItemKindTypeParameter" },
+                unit          = { glyph = "U", hl = "CmpItemKindUnit" },
+                value         = { glyph = "V", hl = "CmpItemKindValue" },
+                variable      = { glyph = "v", hl = "CmpItemKindVariable" },
             }
 
             require('blink.cmp').setup(
