@@ -417,6 +417,12 @@ require("lazy").setup({
             { 'grf', lsp_rename_and_file, desc = 'LSP [R]ename symbol with the [F]ile name' }
         },
         config = function()
+            -- Add bicep file type detection
+            vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+                pattern = "*.bicep",
+                callback = function() vim.bo.filetype = "bicep" end,
+            })
+
             local lspconfig = require("lspconfig")
             require("mason-lspconfig").setup_handlers({
                 ["lua_ls"] = function()
@@ -436,6 +442,11 @@ require("lazy").setup({
                         end,
                     })
                 end,
+                ["bicep"] = function ()
+                    lspconfig.bicep.setup({
+                        cmd = { vim.fn.stdpath("data") .. "/mason/bin/bicep-lsp" }
+                    })
+                end
             })
             vim.diagnostic.config({ virtual_text = true, })
         end
