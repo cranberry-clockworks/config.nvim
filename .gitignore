@@ -1,0 +1,12 @@
+# Whitelist only certain configurations to track and store
+
+# Ignore all
+/*
+
+# Whitelist the .gitignore itself
+!.gitignore
+
+# Whitelist NeoVim
+!nvim
+!nvim/**
+
