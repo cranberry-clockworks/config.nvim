@@ -1,6 +1,3 @@
--- Essentials
-vim.cmd('language en_GB')
-
 -- Behaviours
 vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
 vim.o.pumheight = 15
@@ -516,16 +513,16 @@ require("lazy").setup({
             }
         end,
         keys = {
-            { '<leader>db', function() require('dap').toggle_breakpoint() end,                                    desc = 'Toggle [d]ebug [b]reakpoint' },
-            { '<leader>dc', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = 'Toggle [d]ebug breakpoint wiht [c]ondition' },
-            { '<F5>',       function() require('dap').continue() end,                                             desc = 'Debug continue' },
-            { '<F6>',       function() require('dap').run_last() end,                                             desc = 'Debug run last' },
-            { '<leader>dt', function() require('dap').terminate() end,                                            desc = '[d]ebug [t]erminate' },
-            { '<F10>',      function() require('dap').step_over() end,                                            desc = 'Debug step over' },
-            { '<F11>',      function() require('dap').step_into() end,                                            desc = 'Debug step into' },
-            { '<S-F11>',    function() require('dap').step_out() end,                                             desc = 'Debug step out' },
-            { '<leader>do', function() require('dap').repl.open() end,                                            desc = 'Debug [o]pen repl' },
-            { '<leader>du', function() require('dapui').toggle() end,                                             desc = 'Debug toggle [u]i' },
+            { 'gdb', function() require('dap').toggle_breakpoint() end, desc = 'Toggle [d]ebug [b]reakpoint' },
+            { 'gdB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = 'Toggle [d]ebug [b]reakpoint wiht condition' },
+            { 'gdc', function() require('dap').continue() end, desc = '[d]ebug [c]ontinue' },
+            { 'gdC', function() require('dap').run_last() end, desc = '[d]ebug run last' },
+            { 'gdt', function() require('dap').terminate() end, desc = '[d]ebug [t]erminate' },
+            { 'gds', function() require('dap').step_over() end, desc = '[d]ebug [s]tep over' },
+            { 'gdi', function() require('dap').step_into() end, desc = '[d]ebug step [i]nto' },
+            { 'gdo', function() require('dap').step_out() end, desc = '[d]ebug step [o]ut' },
+            { 'gdr', function() require('dap').repl.open() end, desc = '[d]ebug open [r]epl' },
+            { 'gdu', function() require('dapui').toggle() end, desc = '[d]ebug toggle [u]i' },
         }
     },
     {
@@ -595,7 +592,6 @@ local function map(key, action, description)
 end
 
 -- Keymaps
-
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Generic
