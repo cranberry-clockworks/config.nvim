@@ -10,3 +10,6 @@
 !nvim
 !nvim/**
 
+# Kitty
+!kitty
+!kitty/**
