@@ -1,3 +1,28 @@
-﻿column_width = 80
+﻿# Always parse all Lua variants by default
+syntax = "All"
+
+# Wrap at 80 characters, like Prettier’s `printWidth` (default 80) :contentReference[oaicite:0]{index=0}
+column_width = 80
+
+# Unix line endings only
+line_endings = "Unix"
+
+# Use spaces (never tabs) and indent by 2 spaces, matching Prettier’s `tabWidth` of 2 :contentReference[oaicite:1]{index=1}
 indent_type = "Spaces"
-quote_style = 'AutoPreferSingle'
+indent_width = 2
+
+# Force double‐quotes everywhere (Prettier’s default is double quotes) :contentReference[oaicite:2]{index=2}
+quote_style = "ForceDouble"
+
+# Always keep parentheses on function calls, even single‐arg calls :contentReference[oaicite:3]{index=3}
+call_parentheses = "Always"
+
+# Never collapse simple statements to one line
+collapse_simple_statement = "Never"
+
+# Never insert spaces between function names and their `()` 
+space_after_function_names = "Never"
+
+# Enable built-in require‐statement sorting
+[sort_requires]
+enabled = true  # :contentReference[oaicite:4]{index=4}
