@@ -17,7 +17,6 @@ vim.opt.mouse = 'a'
 
 -- Decrease update times
 vim.opt.updatetime = 250
-vim.opt.timeoutlen = 300
 
 -- Seraching
 vim.opt.grepprg = 'rg --vimgrep --smart-case --no-heading'
