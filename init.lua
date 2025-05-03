@@ -2,7 +2,7 @@
 vim.cmd('language en_GB')
 
 -- Behaviours
-vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect', 'popup' }
+vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
 vim.o.pumheight = 15
 
 
@@ -51,13 +51,12 @@ vim.opt.listchars = {
 }
 -- Netrw
 vim.g.netrw_banner = 0
-vim.g.netrw_bufsettings = 'noma nomod nonu nobl nowrap ro nu rnu'
+vim.g.netrw_bufsettings = 'noma nomod nobl nowrap ro nu rnu'
 vim.g.netrw_list_hide = '^\\./$'
 
 -- Keymaps
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
 
 
 -- Lazy bootstrap
