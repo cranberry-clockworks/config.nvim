@@ -35,7 +35,6 @@ vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
-vim.opt.cursorline = true
 vim.g.have_nerd_font = false
 
 -- Show invisibles
@@ -54,7 +53,6 @@ vim.g.netrw_list_hide = '^\\./$'
 -- Keymaps
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
 
 -- Lazy bootstrap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -316,7 +314,7 @@ require("lazy").setup({
 
             require('blink.cmp').setup(
                 {
-                    keymap = { preset = 'default' },
+                    keymap = { preset = 'default', ['<C-s>'] = {}, },
                     appearance = {
                         nerd_font_variant = 'mono'
                     },
