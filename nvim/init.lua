@@ -166,6 +166,7 @@ require("lazy").setup({
       "nvim-lua/plenary.nvim",
       "cranberry-knight/telescope-compiler.nvim",
       "nvim-telescope/telescope-file-browser.nvim",
+      "debugloop/telescope-undo.nvim"
     },
     keys = {
       {
@@ -254,6 +255,13 @@ require("lazy").setup({
         end,
         desc = "Browse [w]orkspace [s]ymbols",
       },
+      {
+          "<leader>fu",
+          function()
+              require("telescope").extensions.undo.undo()
+          end,
+          desc = "[f]ind entry in [u]ndo tree"
+      },
     },
     opts = {
       defaults = {
@@ -295,6 +303,8 @@ require("lazy").setup({
           theme = "ivy",
           grouped = true,
           hidden = true,
+        },
+        undo = {
         },
       },
     },
