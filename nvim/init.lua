@@ -519,15 +519,15 @@ require("lazy").setup({
   {
     "seblyng/roslyn.nvim",
     ft = { "cs" },
-    -- dependencies = {
-    --     {
+    dependencies = {
+        "j-hui/fidget.nvim"
     --         'tris203/rzls.nvim',
     --         config = function()
     --             ---@diagnostic disable-next-line: missing-fields
     --             require('rzls').setup {}
     --         end,
     --     },
-    -- },
+    },
     config = function()
       require("roslyn").setup({
         --     args = {
@@ -563,11 +563,19 @@ require("lazy").setup({
     -- end,
   },
   {
+      "j-hui/fidget.nvim",
+      opts = { 
+	      notification = {
+		      override_vim_notify = true,
+	      },
+      }
+  },
+  {
     "neovim/nvim-lspconfig",
     dependencies = {
       "mason-lspconfig.nvim",
       "saghen/blink.cmp",
-      { "j-hui/fidget.nvim", opts = {} },
+      "j-hui/fidget.nvim",
     },
     keys = {
       {
