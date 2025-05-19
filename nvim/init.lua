@@ -810,6 +810,7 @@ require("lazy").setup({
   },
   {
     "zbirenbaum/copilot.lua",
+    lazy = false,
     opts = {
       suggestion = {
         keymap = {
@@ -819,7 +820,6 @@ require("lazy").setup({
         },
       },
       panel = { enabled = false },
-      copilot_model = "gpt-4o-copilot",
     },
   },
   {
