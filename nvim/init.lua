@@ -166,7 +166,7 @@ require("lazy").setup({
       "nvim-lua/plenary.nvim",
       "cranberry-knight/telescope-compiler.nvim",
       "nvim-telescope/telescope-file-browser.nvim",
-      "debugloop/telescope-undo.nvim"
+      "debugloop/telescope-undo.nvim",
     },
     keys = {
       {
@@ -256,11 +256,11 @@ require("lazy").setup({
         desc = "Browse [w]orkspace [s]ymbols",
       },
       {
-          "<leader>fu",
-          function()
-              require("telescope").extensions.undo.undo()
-          end,
-          desc = "[f]ind entry in [u]ndo tree"
+        "<leader>fu",
+        function()
+          require("telescope").extensions.undo.undo()
+        end,
+        desc = "[f]ind entry in [u]ndo tree",
       },
     },
     opts = {
@@ -304,8 +304,7 @@ require("lazy").setup({
           grouped = true,
           hidden = true,
         },
-        undo = {
-        },
+        undo = {},
       },
     },
   },
@@ -419,9 +418,8 @@ require("lazy").setup({
     end,
   },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     build = ":MasonUpdate",
-    config = true,
     opts = {
       registries = {
         "github:mason-org/mason-registry",
@@ -430,12 +428,15 @@ require("lazy").setup({
     },
   },
   {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = "mason.nvim",
+    "mason-org/mason-lspconfig.nvim",
     opts = {
       ensure_installed = {
         "lua_ls",
       },
+    },
+    dependencies = {
+      "mason-org/mason.nvim",
+      "neovim/nvim-lspconfig",
     },
   },
   {
@@ -520,13 +521,13 @@ require("lazy").setup({
     "seblyng/roslyn.nvim",
     ft = { "cs" },
     dependencies = {
-        "j-hui/fidget.nvim"
-    --         'tris203/rzls.nvim',
-    --         config = function()
-    --             ---@diagnostic disable-next-line: missing-fields
-    --             require('rzls').setup {}
-    --         end,
-    --     },
+      "j-hui/fidget.nvim",
+      --         'tris203/rzls.nvim',
+      --         config = function()
+      --             ---@diagnostic disable-next-line: missing-fields
+      --             require('rzls').setup {}
+      --         end,
+      --     },
     },
     config = function()
       require("roslyn").setup({
@@ -563,12 +564,12 @@ require("lazy").setup({
     -- end,
   },
   {
-      "j-hui/fidget.nvim",
-      opts = { 
-	      notification = {
-		      override_vim_notify = true,
-	      },
-      }
+    "j-hui/fidget.nvim",
+    opts = {
+      notification = {
+        override_vim_notify = true,
+      },
+    },
   },
   {
     "neovim/nvim-lspconfig",
@@ -637,39 +638,30 @@ require("lazy").setup({
         end,
       })
 
-      local lspconfig = require("lspconfig")
-      require("mason-lspconfig").setup_handlers({
-        function(server_name)
-          lspconfig[server_name].setup({})
-        end,
-        ["lua_ls"] = function()
-          lspconfig.lua_ls.setup({
-            settings = {
-              Lua = {
-                format = {
-                  enable = false,
-                },
-                diagnostics = { globals = { "vim" } },
-                telemetry = { enable = false },
-              },
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            format = {
+              enable = false,
             },
-          })
-        end,
-        ["beancount"] = function()
-          lspconfig.beancount.setup({
-            root_dir = function(fname)
-              return vim.fs.dirname(
-                vim.fs.find("main.beancount", { path = fname, upward = true })[1]
-              )
-            end,
-          })
-        end,
-        ["bicep"] = function()
-          lspconfig.bicep.setup({
-            cmd = { vim.fn.stdpath("data") .. "/mason/bin/bicep-lsp" },
-          })
+            diagnostics = { globals = { "vim" } },
+            telemetry = { enable = false },
+          },
+        },
+      })
+
+      vim.lsp.config("beancount", {
+        root_dir = function(fname)
+          return vim.fs.dirname(
+            vim.fs.find("main.beancount", { path = fname, upward = true })[1]
+          )
         end,
       })
+
+      vim.lsp.config("bicep", {
+        cmd = { vim.fn.stdpath("data") .. "/mason/bin/bicep-lsp" },
+      })
+
       vim.diagnostic.config({ virtual_text = true })
     end,
   },
@@ -720,14 +712,14 @@ require("lazy").setup({
           name = "netcoredbg",
           request = "launch",
           program = function()
-              return vim.fn.exepath("dotnet")
+            return vim.fn.exepath("dotnet")
           end,
           args = {
-              "run",
-              "--project",
-              "Laerdal.Web/Laerdal.Web.csproj",
-              "-c",
-              "Laerdal.Local"
+            "run",
+            "--project",
+            "Laerdal.Web/Laerdal.Web.csproj",
+            "-c",
+            "Laerdal.Local",
           },
           -- env = {
           --   ASPNETCORE_ENVIRONMENT = "Development",
